@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, redirect
+from flask import Flask, render_template, request, send_file
 from werkzeug.utils import secure_filename
 import os
 import tempfile
@@ -16,10 +16,11 @@ def index():
         end_date = request.form.get("end_date")
         appealer_name = request.form.get("appealer_name")
         sheet_url = request.form.get("sheet_url")
-        creds_json = request.form.get("google_creds_json")
 
-        if not file or not start_date or not end_date or not appealer_name or not sheet_url:
-            return render_template("index.html", error="Please fill in all fields.")
+        creds_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
+
+        if not file or not start_date or not end_date or not appealer_name or not sheet_url or not creds_json:
+            return render_template("index.html", error="Missing one or more required fields.")
 
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -40,6 +41,7 @@ def index():
         return send_file(result_csv_path, as_attachment=True, download_name="Findr_Mismatches.csv")
 
     return render_template("index.html")
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
