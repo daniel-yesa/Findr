@@ -3,6 +3,9 @@
 <head>
     <title>Findr | YESA</title>
     <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet" />
+    <!-- Litepicker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
+
     <style>
         body {
             background-color: #121212;
@@ -66,8 +69,15 @@
         <label>📤 Upload Booked Sales CSV:</label>
         <input type="file" name="csv_file" required>
 
-        <label>📅 Select Date Range:</label>
-        <input type="text" name="date_range" id="date_range" required>
+        <label for="date-range">📅 Select Booked Date Range</label>
+        <input
+          type="text"
+          id="date-range"
+          name="date_range"
+          required
+          placeholder="Click to select date range"
+          class="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
         <label>🔗 Paste Google Sheet URL:</label>
         <input type="url" name="sheet_url" value="https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit#gid=1075311190" required>
@@ -159,6 +169,21 @@
             }
         });
     });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+<script>
+  const picker = new Litepicker({
+    element: document.getElementById("date-range"),
+    singleMode: false,
+    format: "M/D/YYYY",
+    numberOfMonths: 2,
+    dropdowns: {
+      minYear: 2023,
+      maxYear: null,
+      months: true,
+      years: true,
+    }
+  });
 </script>
 </body>
 </html>
