@@ -21,9 +21,10 @@ def index():
             date_range = request.form["date_range"]
             appealer_name = request.form["appealer_name"]
 
+            date_range = request.form.get("date_range")
             start_date_str, end_date_str = date_range.split(" - ")
-            start_date = datetime.strptime(start_date_str.strip(), "%Y-%m-%d").date()
-            end_date = datetime.strptime(end_date_str.strip(), "%Y-%m-%d").date()
+            start_date = datetime.strptime(start_date_str.strip(), "%m/%d/%Y").date()
+            end_date = datetime.strptime(end_date_str.strip(), "%m/%d/%Y").date()
 
             df_uploaded = pd.read_csv(file)
             mismatches, internal_df = process_findr_report(df_uploaded, gs_url, start_date, end_date)
