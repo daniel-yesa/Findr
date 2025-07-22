@@ -5,12 +5,11 @@ import tempfile
 import pandas as pd
 from processor import process_findr_report
 
-if __name__ == "__main__":
-    from app import app
-    app.run(host="0.0.0.0", port=5000)
-
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = tempfile.gettempdir()
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
