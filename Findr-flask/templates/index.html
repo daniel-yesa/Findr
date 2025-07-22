@@ -1,20 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Findr | YESA</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Findr | YESA</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f4f6f9, #e0e7ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    label {
+      font-weight: bold;
+      color: #444;
+    }
+
+    input, textarea {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+
+    button {
+      background-color: #4f46e5;
+      color: white;
+      padding: 12px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3730a3;
+    }
+
+    .error {
+      background: #fee2e2;
+      border: 1px solid #f87171;
+      padding: 0.75rem;
+      color: #b91c1c;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
 </head>
-<body style="font-family:sans-serif; max-width:600px; margin:0 auto;">
-    <h2>🔎 Findr - Missing Accounts / PSU No Match</h2>
+<body>
+  <div class="container">
+    <h2>🔎 Findr – PSU Matching Tool</h2>
+
     {% if error %}
-        <p style="color:red;">{{ error }}</p>
+      <div class="error">{{ error }}</div>
     {% endif %}
+
     <form method="post" enctype="multipart/form-data">
-        <p><label>Upload Booked Sales CSV:</label><br><input type="file" name="file" required></p>
-        <p><label>Start Date:</label><br><input type="date" name="start_date" required></p>
-        <p><label>End Date:</label><br><input type="date" name="end_date" required></p>
-        <p><label>Name of Appealer:</label><br><input type="text" name="appealer_name" required></p>
-        <p><label>Google Sheet URL:</label><br><input type="url" name="sheet_url" required></p>
-        <button type="submit">Run Report</button>
+      <div>
+        <label for="file">Upload Booked Sales CSV</label>
+        <input type="file" id="file" name="file" required />
+      </div>
+
+      <div>
+        <label for="start_date">Start Date</label>
+        <input type="date" id="start_date" name="start_date" required />
+      </div>
+
+      <div>
+        <label for="end_date">End Date</label>
+        <input type="date" id="end_date" name="end_date" required />
+      </div>
+
+      <div>
+        <label for="appealer_name">Name of Appealer</label>
+        <input type="text" id="appealer_name" name="appealer_name" placeholder="e.g. Daniel Y." required />
+      </div>
+
+      <div>
+        <label for="sheet_url">Google Sheet URL (Merged PSU Report)</label>
+        <input type="url" id="sheet_url" name="sheet_url" placeholder="https://docs.google.com/..." required />
+      </div>
+
+      <button type="submit">🚀 Run Report</button>
     </form>
+  </div>
 </body>
 </html>
