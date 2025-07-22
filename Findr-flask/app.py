@@ -18,7 +18,7 @@ def index():
         sheet_url = request.form.get("sheet_url")
         creds_json = request.form.get("google_creds_json")
 
-        if not file or not start_date or not end_date or not appealer_name or not sheet_url or not creds_json:
+        if not file or not start_date or not end_date or not appealer_name or not sheet_url:
             return render_template("index.html", error="Please fill in all fields.")
 
         filename = secure_filename(file.filename)
