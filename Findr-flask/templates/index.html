@@ -1,162 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Findr | YESA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      animation: fadeIn 1s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.25);
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 2rem;
-      max-width: 520px;
-      width: 100%;
-      color: #1a202c;
-      animation: fadeIn 0.8s ease-in-out;
-    }
-
-    h2 {
-      text-align: center;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      color: #2d3748;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .input-group {
-      position: relative;
-    }
-
-    .input-group input,
-    .input-group textarea {
-      width: 100%;
-      padding: 14px 12px;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.75);
-      font-size: 1rem;
-      transition: all 0.3s ease;
-    }
-
-    .input-group label {
-      position: absolute;
-      top: -10px;
-      left: 12px;
-      background: rgba(255,255,255,0.75);
-      padding: 0 6px;
-      font-size: 0.85rem;
-      color: #4a5568;
-      transition: all 0.3s ease;
-    }
-
-    .input-group input:focus,
-    .input-group textarea:focus {
-      border-color: #667eea;
-      outline: none;
-      background: #ffffff;
-    }
-
-    button {
-      padding: 14px;
-      background: linear-gradient(to right, #667eea, #764ba2);
-      color: white;
-      font-weight: 600;
-      font-size: 1rem;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    button:hover {
-      background: linear-gradient(to right, #5a67d8, #6b46c1);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    }
-
-    .error {
-      background: #ffe5e5;
-      color: #b00020;
-      border: 1px solid #fca5a5;
-      padding: 10px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    @media (max-width: 600px) {
-      .card {
-        padding: 1.5rem;
-      }
-    }
-  </style>
+    <title>Findr | YESA</title>
+    <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #121212;
+            font-family: 'Segoe UI', sans-serif;
+            color: #f0f0f0;
+            padding: 2rem;
+        }
+        h1, h2 {
+            color: #00ffcc;
+        }
+        .container {
+            max-width: 960px;
+            margin: auto;
+        }
+        input, textarea, button, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 8px;
+        }
+        button {
+            background: #00ffcc;
+            color: black;
+            font-weight: bold;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+            background: #00e6b8;
+        }
+        .spinner {
+            display: none;
+            margin-top: 10px;
+        }
+        .spinner.show {
+            display: block;
+        }
+        table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #222;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h2>🔎 Findr – PSU Matching Tool</h2>
+<div class="container">
+    <h1>🔎 Findr - PSU Check</h1>
+    <form method="POST" enctype="multipart/form-data" onsubmit="document.getElementById('spinner').classList.add('show');">
+        <label>📤 Upload Booked Sales CSV:</label>
+        <input type="file" name="csv_file" required>
 
-    {% if error %}
-      <div class="error">{{ error }}</div>
+        <label>📅 Select Date Range:</label>
+        <input type="text" name="date_range" id="date_range" required>
+
+        <label>🔗 Paste Google Sheet URL:</label>
+        <input type="url" name="sheet_url" value="https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit#gid=1075311190" required>
+
+        <label>🧾 Name of Appealer:</label>
+        <input type="text" name="appealer_name" required>
+
+        <button type="submit">🚀 Run Report</button>
+        <div id="spinner" class="spinner">⏳ Processing, please wait...</div>
+    </form>
+
+    {% if mismatches %}
+        <h2>🧾 Mismatched Accounts</h2>
+        <table>
+            <thead>
+                <tr>
+                    {% for col in mismatches[0].keys() %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in mismatches %}
+                    <tr>
+                        {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
 
-    <form method="post" enctype="multipart/form-data">
-      <div class="input-group">
-        <label for="file">Upload Booked Sales CSV</label>
-        <input type="file" id="file" name="file" required />
-      </div>
+    {% if ontario %}
+        <h2>📍 Ontario Open Appeals</h2>
+        <table>
+            <thead>
+                <tr>
+                    {% for col in ontario[0].keys() %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in ontario %}
+                    <tr>
+                        {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 
-      <div class="input-group">
-        <label for="start_date">Start Date</label>
-        <input type="date" id="start_date" name="start_date" required />
-      </div>
+    {% if quebec %}
+        <h2>📍 Quebec Open Appeals</h2>
+        <table>
+            <thead>
+                <tr>
+                    {% for col in quebec[0].keys() %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in quebec %}
+                    <tr>
+                        {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
 
-      <div class="input-group">
-        <label for="end_date">End Date</label>
-        <input type="date" id="end_date" name="end_date" required />
-      </div>
-
-      <div class="input-group">
-        <label for="appealer_name">Name of Appealer</label>
-        <input type="text" id="appealer_name" name="appealer_name" placeholder="e.g. Daniel Y." required />
-      </div>
-
-      <div class="input-group">
-        <label for="sheet_url">Google Sheet URL (Merged PSU Report)</label>
-        <input type="url" id="sheet_url" name="sheet_url" placeholder="https://docs.google.com/..." required />
-      </div>
-
-      <button type="submit">🚀 Run Findr Report</button>
-    </form>
-  </div>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dr = document.querySelector('#date_range');
+        $(dr).daterangepicker({
+            opens: 'right',
+            autoApply: true,
+            locale: {
+                format: 'YYYY-MM-DD'
+            }
+        });
+    });
+</script>
 </body>
 </html>
