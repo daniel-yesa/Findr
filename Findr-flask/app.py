@@ -8,9 +8,6 @@ from processor import process_findr_report
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = tempfile.gettempdir()
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -43,3 +40,6 @@ def index():
         return send_file(result_csv_path, as_attachment=True, download_name="Findr_Mismatches.csv")
 
     return render_template("index.html")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
