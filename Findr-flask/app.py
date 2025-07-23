@@ -43,6 +43,19 @@ def index():
                 df_uploaded, gs_url, start_date, end_date, appealer_name
             )
 
+            # 🔢 Summary logic
+            checked_accounts = internal_df['Account Number'].nunique()
+            valid_mismatches = mismatches[mismatches["Reason"].isin(["Missing from report", "PSU - no match"])]
+            ontario_mismatch_count = valid_mismatches["Account Number"].str.startswith("500").sum()
+            quebec_mismatch_count = valid_mismatches["Account Number"].str.startswith("960").sum()
+            
+            summary = {
+                "accounts_checked": checked_accounts,
+                "total_mismatches": len(valid_mismatches),
+                "ontario_mismatches": ontario_mismatch_count,
+                "quebec_mismatches": quebec_mismatch_count
+            }
+            
             # 🧹 Filter for appeals
             filtered = mismatches[mismatches["Reason"] != "Wrong date"]
             merged = pd.merge(filtered, internal_df, on="Account Number", how="left")
@@ -98,7 +111,8 @@ def index():
                 mismatches=mismatches.to_dict(orient="records"),
                 ontario=ontario_df.to_dict(orient="records"),
                 quebec=quebec_df.to_dict(orient="records"),
-                appealer_name=appealer_name
+                appealer_name=appealer_name,
+                summary=summary
             )
 
         except Exception as e:
