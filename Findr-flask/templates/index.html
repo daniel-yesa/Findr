@@ -138,6 +138,15 @@
   <script>AOS.init();</script>
 
 <script>
+  new Litepicker({
+      element: document.getElementById("date-range"),
+      singleMode: false,
+      numberOfMonths: 2,
+      numberOfColumns: 2,
+      format: "M/D/YYYY",
+      autoApply: true,
+    });
+  
 function copyTableBodyOnly(tableId) {
     const table = document.getElementById(tableId);
     const rows = table.querySelectorAll("tbody tr");
