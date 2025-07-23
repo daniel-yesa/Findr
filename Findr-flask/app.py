@@ -20,24 +20,29 @@ def index():
             gs_url = request.form.get("sheet_url", "").strip()
             date_range = request.form.get("date_range", "").strip()
             appealer_name = request.form.get("appealer_name", "").strip()
-            
+
+            # 🔍 Debugging: log input states
+            print("⚙️ Received form data:")
+            print(f"  - CSV file present: {'Yes' if file else 'No'}")
+            print(f"  - Sheet URL: {gs_url}")
+            print(f"  - Date Range: {date_range}")
+            print(f"  - Appealer Name: {appealer_name}")
+
             if file is None or not all([gs_url, date_range, appealer_name]):
                 return "<h3 style='color:red;'>Missing form inputs</h3>"
 
-            # ✅ Parse the date range
             start_date_str, end_date_str = date_range.split(" - ")
             start_date = datetime.strptime(start_date_str.strip(), "%m/%d/%Y").date()
             end_date = datetime.strptime(end_date_str.strip(), "%m/%d/%Y").date()
 
-            # ✅ Read uploaded CSV
             df_uploaded = pd.read_csv(file)
 
-            # ✅ Run mismatch logic
+            # 🔧 Process logic
             mismatches, internal_df = process_findr_report(
                 df_uploaded, gs_url, start_date, end_date, appealer_name
             )
 
-            # ✅ Remove "Wrong date" mismatches
+            # 🧹 Filter for appeals
             filtered = mismatches[mismatches["Reason"] != "Wrong date"]
             merged = pd.merge(filtered, internal_df, on="Account Number", how="left")
 
@@ -94,6 +99,9 @@ def index():
             )
 
         except Exception as e:
+            # 🧠 Log the full traceback
+            print("❌ Exception occurred:")
+            traceback.print_exc()
             return f"<h3 style='color: red;'>Error: {str(e)}</h3>"
 
     return render_template("index.html")
