@@ -21,7 +21,7 @@ PHONE_KEYWORDS = ["Freedom", "Basic", "Landline Phone"]
 def match_product(name, keywords):
     return any(k == str(name).strip() for k in keywords)
 
-def process_findr_report(uploaded_file, sheet_url, start_date, end_date, appealer_name, google_creds_json):
+def process_findr_report(uploaded_file, sheet_url, start_date, end_date, appealer_name):
     internal_df = pd.read_csv(uploaded_file)
     internal_df['Date of Sale'] = pd.to_datetime(internal_df['Date of Sale'], errors='coerce')
     internal_df = internal_df[
