@@ -21,6 +21,19 @@
     body {
       font-family: 'Inter', sans-serif;
     }
+    .table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 20px;
+    }
+
+    button {
+        background: #00ffcc;
+        color: white; /* ✅ Make text white */
+        font-weight: bold;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
     .excel-style th, .excel-style td {
       white-space: pre;
     }
@@ -42,6 +55,15 @@
         background-color: #e5e5e5;
         font-weight: bold;
     }    
+    .copy-btn {
+    background: #4f46e5;
+    color: white;
+    padding: 6px 12px;
+    margin-left: 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen">
@@ -86,49 +108,53 @@
     {% endif %}
 
     {% if ontario %}
-      <h3>Ontario Open Appeals</h3>
-      <button onclick="copyTableBodyOnly('ontario-table')">📋 Copy Ontario Appeals</button>
-      <table id="ontario-table" class="excel-style">
-        <thead>
-          <tr>
-            {% for col in ontario[0].keys() %}
-              <th>{{ col }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in ontario %}
+      <h3 style="display: inline-block;">Ontario Open Appeals</h3>
+      <button class="copy-btn" onclick="copyTableBodyOnly('ontario-table')">Copy</button>
+      <div class="table-wrapper">
+        <table id="ontario-table" class="excel-style">
+          <thead>
             <tr>
-              {% for val in row.values() %}
-                <td>{{ val }}</td>
+              {% for col in ontario[0].keys() %}
+                <th>{{ col }}</th>
               {% endfor %}
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for row in ontario %}
+              <tr>
+                {% for val in row.values() %}
+                  <td>{{ val }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% endif %}
     
     {% if quebec %}
-      <h3>Quebec Open Appeals</h3>
-      <button onclick="copyTableBodyOnly('quebec-table')">📋 Copy Quebec Appeals</button>
-      <table id="quebec-table" class="excel-style">
-        <thead>
-          <tr>
-            {% for col in quebec[0].keys() %}
-              <th>{{ col }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in quebec %}
+      <h3 style="display: inline-block;">Quebec Open Appeals</h3>
+      <button class="copy-btn" onclick="copyTableBodyOnly('quebec-table')">Copy</button>
+      <div class="table-wrapper">
+        <table id="quebec-table" class="excel-style">
+          <thead>
             <tr>
-              {% for val in row.values() %}
-                <td>{{ val }}</td>
+              {% for col in quebec[0].keys() %}
+                <th>{{ col }}</th>
               {% endfor %}
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for row in quebec %}
+              <tr>
+                {% for val in row.values() %}
+                  <td>{{ val }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% endif %}
   </div>
 
