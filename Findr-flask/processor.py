@@ -35,11 +35,7 @@ def process_findr_report(uploaded_file, sheet_url, start_date, end_date, appeale
     internal_df['Phone'] = internal_df['Product Name'].apply(lambda x: int(match_product(x, PHONE_KEYWORDS)))
 
     summarized = internal_df.groupby('Account Number')[['Internet', 'TV', 'Phone']].max().reset_index()
-
-    creds = Credentials.from_service_account_info(
-        json.loads(google_creds_json),
-        scopes=["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    )
+    
     sheet = gspread.authorize(creds).open_by_url(sheet_url)
     worksheet = sheet.worksheet("Merged PSUReport")
     rows = worksheet.get_all_values()
