@@ -16,14 +16,12 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 def index():
     if request.method == "POST":
         try:
-            # ✅ Safely fetch form values
-            file = request.files.get("csv_file")
-            gs_url = request.form.get("sheet_url")
-            date_range = request.form.get("date_range")
-            appealer_name = request.form.get("appealer_name")
-
-            # ✅ Validate that all are present
-            if not all([file, gs_url, date_range, appealer_name]):
+            file = request.files.get("csv_file", None)
+            gs_url = request.form.get("sheet_url", "").strip()
+            date_range = request.form.get("date_range", "").strip()
+            appealer_name = request.form.get("appealer_name", "").strip()
+            
+            if file is None or not all([gs_url, date_range, appealer_name]):
                 return "<h3 style='color:red;'>Missing form inputs</h3>"
 
             # ✅ Parse the date range
