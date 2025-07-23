@@ -63,6 +63,8 @@ def index():
                 elif reason == "PSU - no match":
                     return "PSUs don't match report"
                 return ""
+            
+            merged = merged.drop_duplicates(subset="Account Number")
 
             appeals_df = pd.DataFrame({
                 "Type of Appeal": ["Open"] * len(merged),
