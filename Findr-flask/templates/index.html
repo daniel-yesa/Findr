@@ -67,39 +67,51 @@
     </div>
     {% endif %}
 
-    {% for region in ["mismatches", "ontario", "quebec"] %}
-      {% if globals()[region] %}
-        <div class="mt-10" data-aos="fade-up">
-          <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-semibold">📄 {{ region.capitalize() }} Table</h2>
-            <button onclick="copyTable('{{ region }}-table')"
-              class="text-sm bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded transition">
-              📋 Copy Table
-            </button>
-          </div>
-          <div class="overflow-x-auto mt-2">
-            <table id="{{ region }}-table" class="min-w-full border border-black bg-white text-black excel-style">
-              <thead class="bg-gray-200">
-                <tr>
-                  {% for col in globals()[region][0].keys() %}
-                  <th class="px-3 py-2 border border-black text-sm">{{ col }}</th>
-                  {% endfor %}
-                </tr>
-              </thead>
-              <tbody>
-                {% for row in globals()[region] %}
-                <tr>
-                  {% for val in row.values() %}
-                  <td class="px-3 py-2 border border-gray-400 text-sm">{{ val }}</td>
-                  {% endfor %}
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      {% endif %}
-    {% endfor %}
+    {% if ontario %}
+      <h3>Ontario Open Appeals</h3>
+      <button onclick="copyTable('ontario-table')">📋 Copy Ontario Appeals</button>
+      <table id="ontario-table" class="excel-style">
+        <thead>
+          <tr>
+            {% for col in ontario[0].keys() %}
+              <th>{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in ontario %}
+            <tr>
+              {% for val in row.values() %}
+                <td>{{ val }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+    
+    {% if quebec %}
+      <h3>Quebec Open Appeals</h3>
+      <button onclick="copyTable('quebec-table')">📋 Copy Quebec Appeals</button>
+      <table id="quebec-table" class="excel-style">
+        <thead>
+          <tr>
+            {% for col in quebec[0].keys() %}
+              <th>{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in quebec %}
+            <tr>
+              {% for val in row.values() %}
+                <td>{{ val }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
   </div>
 
   <!-- Litepicker & AOS JS -->
