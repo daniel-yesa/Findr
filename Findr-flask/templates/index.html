@@ -184,26 +184,25 @@
 
     {% if quebec %}
         <h3>Quebec Open Appeals</h3>
-        {% if quebec %}
         <table class="excel-style">
-          <thead>
-            <tr>
-              {% for col in quebec[0].keys() %}
-                <th>{{ col }}</th>
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in quebec %}
-              <tr>
-                {% for val in row.values() %}
-                  <td>{{ val }}</td>
+            <thead>
+                <tr>
+                    {% for col in quebec[0].keys() %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in quebec %}
+                    <tr>
+                        {% for val in row.values() %}
+                            <td>{{ val }}</td>
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
-              </tr>
-            {% endfor %}
-          </tbody>
+            </tbody>
         </table>
-        {% else %}
+    {% else %}
         <p>No Quebec appeals to display.</p>
     {% endif %}
 </div>
