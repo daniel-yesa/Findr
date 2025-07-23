@@ -18,7 +18,6 @@ def index():
         try:
             file = request.files["csv_file"]
             gs_url = request.form["sheet_url"]
-            date_range = request.form["date_range"]
             appealer_name = request.form["appealer_name"]
 
             date_range = request.form.get("date_range")
