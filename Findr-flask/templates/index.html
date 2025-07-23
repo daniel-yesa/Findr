@@ -1,278 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Findr | YESA</title>
-    <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet" />
-    <!-- Litepicker CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Findr | YESA</title>
 
-    <style>
-        body {
-            overflow-x: hidden;
-            background-color: #121212;
-            font-family: 'Segoe UI', sans-serif;
-            color: #f0f0f0;
-            padding: 2rem;
-        }
-        h1, h2 {
-            color: #00ffcc;
-        }
-        .container {
-            max-width: 960px;
-            margin: auto;
-        }
-        input, textarea, button, select {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: #1e1e1e;
-            border: 1px solid #333;
-            color: white;
-            border-radius: 8px;
-        }
-        button {
-            background: #00ffcc;
-            color: black;
-            font-weight: bold;
-            border: none;
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            transform: scale(1.05);
-            background: #00e6b8;
-        }
-        .spinner {
-            display: none;
-            margin-top: 10px;
-        }
-        .spinner.show {
-            display: block;
-        }
-        table {
-            table-layout: auto;
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-            word-break: break-word;
-        }
-        th, td {
-            border: 1px solid #444;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #222;
-        }
-      .litepicker {
-        background-color: #1e1e2f;
-        color: #f5f5f5;
-        border: 1px solid #333;
-        font-family: 'Segoe UI', sans-serif;
-        box-shadow: 0 0 10px rgba(0,0,0,0.6);
-      }
-      .litepicker .container__days .day-item {
-        background-color: transparent;
-        color: #f5f5f5;
-      }
-      .litepicker .container__days .day-item.is-today {
-        border: 1px solid #888;
-      }
-      .litepicker .container__days .day-item.is-selected {
-        background-color: #4f46e5;
-        color: #fff;
-        border-radius: 4px;
-      }
-      .litepicker .month-item {
-        background-color: #1e1e2f;
-      }
-      .litepicker .container__months .month-item-header {
-        color: #ccc;
-      }
-      .litepicker .button-apply,
-      .litepicker .button-cancel {
-        background-color: #4f46e5;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        padding: 6px 12px;
-        cursor: pointer;
-      }
-        table.excel-style {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: monospace;
-            font-size: 14px;
-            margin-bottom: 30px;
-            background-color: white;
-            color: black;
-        }
-        
-        table.excel-style th, table.excel-style td {
-            border: 1px solid #333;
-            padding: 6px 10px;
-            white-space: pre;
-        }
-        
-        table.excel-style th {
-            background-color: #e6e6e6;
-            font-weight: bold;
-        }
-    </style>
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Litepicker CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
+
+  <!-- AOS for animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .excel-style th, .excel-style td {
+      white-space: pre;
+    }
+  </style>
 </head>
-<body>
-<div class="container">
-    <h1>🔎 Findr - Account Discrepencies</h1>
-    <form method="POST" enctype="multipart/form-data" onsubmit="document.getElementById('spinner').classList.add('show');">
-        <label>📤 Upload Booked Sales CSV:</label>
-        <input type="file" name="csv_file" required>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div class="max-w-6xl mx-auto p-6">
+    <h1 class="text-4xl font-bold text-teal-400 mb-4">🔎 Findr – YESA Discrepancy Tool</h1>
 
-        <label for="date-range" class="block text-sm font-medium mb-1 text-gray-200">📅 Booked Date Range</label>
-        <input
-          type="text"
-          id="date-range"
-          name="date_range"
-          required
-          placeholder="Click to select a range"
-          class="bg-gray-900 text-white border border-gray-700 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+    <form method="POST" enctype="multipart/form-data" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-lg" onsubmit="document.getElementById('spinner').classList.remove('hidden');">
+      <div>
+        <label class="block text-sm text-gray-300">📤 Upload Booked Sales CSV:</label>
+        <input type="file" name="csv_file" required class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
+      </div>
 
-        <label>🔗 Paste Google Sheet URL:</label>
-        <input type="url" name="sheet_url" value="https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit?gid=719546440#gid=719546440" required>
+      <div>
+        <label class="block text-sm text-gray-300">📅 Booked Date Range:</label>
+        <input type="text" id="date-range" name="date_range" required placeholder="Select date range"
+               class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
+      </div>
 
-        <label>🧾 Name of Appealer:</label>
-        <input type="text" name="appealer_name" required>
+      <div>
+        <label class="block text-sm text-gray-300">🔗 Paste Google Sheet URL:</label>
+        <input type="url" name="sheet_url" required class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
+      </div>
 
-        <button type="submit">🚀 Run Report</button>
-        <div id="spinner" class="spinner">⏳ Checking, please wait...</div>
+      <div>
+        <label class="block text-sm text-gray-300">🧾 Name of Appealer:</label>
+        <input type="text" name="appealer_name" required class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-black font-semibold py-2 px-4 rounded shadow transition-all duration-300">
+          🚀 Run Report
+        </button>
+        <div id="spinner" class="hidden text-sm text-gray-400">⏳ Running...</div>
+      </div>
     </form>
 
-    {% if summary %}
-      <div style="margin-top: 30px; margin-bottom: 10px; background: #1d1d1d; border: 1px solid #444; border-radius: 8px; padding: 16px;">
-        <h3 style="color: #00ffcc; margin-bottom: 8px;">📊 Summary</h3>
-        <p><strong>Accounts Checked:</strong> {{ summary.accounts_checked }}</p>
-        <p><strong>Mismatched Accounts:</strong> {{ summary.total_mismatches }} (Ontario: {{ summary.ontario_mismatches }} | Quebec: {{ summary.quebec_mismatches }})</p>
-      </div>
-    {% endif %}
-    
-    {% if mismatches %}
-        <h2>🧾 Mismatched Accounts</h2>
-        <div style="overflow-x:auto;">
-          <table class="excel-style">
-            <thead>
-              <tr>
-                {% for col in mismatches[0].keys() %}
-                  <th>{{ col }}</th>
-                {% endfor %}
-              </tr>
-            </thead>
-            <tbody>
-              {% for row in mismatches %}
-                <tr>
-                  {% for value in row.values() %}
-                    <td>{{ value }}</td>
-                  {% endfor %}
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+    {% if stats %}
+    <div class="mt-6 bg-gray-700 p-4 rounded-lg shadow" data-aos="fade-up">
+      <p class="text-lg font-semibold">Accounts Checked: {{ stats.total_checked }}</p>
+      <p class="text-lg">Mismatched Accounts: {{ stats.total_mismatched }} (Ontario: {{ stats.ontario }} | Quebec: {{ stats.quebec }})</p>
+    </div>
     {% endif %}
 
-    {% if ontario %}
-        <h3>Ontario Open Appeals</h3>
-        <button onclick="copyTable('ontario-table')">📋 Copy Ontario Appeals</button>
-        <div style="overflow-x:auto;">
-          <table id="ontario-table" class="excel-style">
-            <thead>
-              <tr>
-                {% for col in ontario[0].keys() %}
-                  <th>{{ col }}</th>
-                {% endfor %}
-              </tr>
-            </thead>
-            <tbody>
-              {% for row in ontario %}
+    {% for region in ["mismatches", "ontario", "quebec"] %}
+      {% if globals()[region] %}
+        <div class="mt-10" data-aos="fade-up">
+          <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-semibold">📄 {{ region.capitalize() }} Table</h2>
+            <button onclick="copyTable('{{ region }}-table')"
+              class="text-sm bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded transition">
+              📋 Copy Table
+            </button>
+          </div>
+          <div class="overflow-x-auto mt-2">
+            <table id="{{ region }}-table" class="min-w-full border border-black bg-white text-black excel-style">
+              <thead class="bg-gray-200">
+                <tr>
+                  {% for col in globals()[region][0].keys() %}
+                  <th class="px-3 py-2 border border-black text-sm">{{ col }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in globals()[region] %}
                 <tr>
                   {% for val in row.values() %}
-                    <td>{{ val }}</td>
+                  <td class="px-3 py-2 border border-gray-400 text-sm">{{ val }}</td>
                   {% endfor %}
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-    {% endif %}
-
-    {% if quebec %}
-        <h3>Quebec Open Appeals</h3>
-        <button onclick="copyTable('quebec-table')">📋 Copy Quebec Appeals</button>
-        <div style="overflow-x:auto;">
-          <table id="quebec-table" class="excel-style">
-            <thead>
-              <tr>
-                {% for col in quebec[0].keys() %}
-                  <th>{{ col }}</th>
                 {% endfor %}
-              </tr>
-            </thead>
-            <tbody>
-              {% for row in quebec %}
-                <tr>
-                  {% for val in row.values() %}
-                    <td>{{ val }}</td>
-                  {% endfor %}
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
-    {% endif %}
-</div>
+      {% endif %}
+    {% endfor %}
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
-<script>
-  new Litepicker({
-    element: document.getElementById("date-range"),
-    singleMode: false,
-    numberOfMonths: 2,
-    numberOfColumns: 2,
-    format: "M/D/YYYY",
-    autoApply: true,
-    dropdowns: {
-      minYear: 2023,
-      maxYear: null,
-      months: true,
-      years: true
-    },
-    setup: (picker) => {
-      picker.on('selected', () => {
-        document.getElementById("date-range").classList.add("filled");
-      });
-    }
-  });
-</script>
-<script>
-function copyTable(tableId) {
-    const table = document.getElementById(tableId);
-    if (!table) return;
+  <!-- Litepicker & AOS JS -->
+  <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init();</script>
 
-    let range = '';
-    const rows = table.querySelectorAll("tbody tr");
-    rows.forEach(row => {
-        const cells = row.querySelectorAll("td");
-        const rowText = Array.from(cells).map(cell => cell.textContent).join('\t');
-        range += rowText + '\n';
+  <script>
+    new Litepicker({
+      element: document.getElementById("date-range"),
+      singleMode: false,
+      numberOfMonths: 2,
+      numberOfColumns: 2,
+      format: "M/D/YYYY",
+      autoApply: true,
     });
 
-    // Create temp textarea to copy
-    const textarea = document.createElement("textarea");
-    textarea.value = range;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textarea);
-
-    alert("✅ Table copied to clipboard!");
-}
-</script>
+    function copyTable(tableId) {
+      const table = document.getElementById(tableId);
+      const range = document.createRange();
+      range.selectNode(table);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand('copy');
+      selection.removeAllRanges();
+      alert("Copied!");
+    }
+  </script>
 </body>
 </html>
