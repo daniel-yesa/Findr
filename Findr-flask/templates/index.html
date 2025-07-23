@@ -8,6 +8,7 @@
 
     <style>
         body {
+            overflow-x: hidden;
             background-color: #121212;
             font-family: 'Segoe UI', sans-serif;
             color: #f0f0f0;
@@ -48,9 +49,10 @@
             display: block;
         }
         table {
-            width: 100%;
-            margin-top: 1rem;
-            border-collapse: collapse;
+            table-layout: auto;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
         }
         th, td {
             border: 1px solid #444;
@@ -148,70 +150,74 @@
     
     {% if mismatches %}
         <h2>🧾 Mismatched Accounts</h2>
-        <table>
+        <div style="overflow-x:auto;">
+          <table class="excel-style">
             <thead>
-                <tr>
-                    {% for col in mismatches[0].keys() %}
-                        <th>{{ col }}</th>
-                    {% endfor %}
-                </tr>
+              <tr>
+                {% for col in mismatches[0].keys() %}
+                  <th>{{ col }}</th>
+                {% endfor %}
+              </tr>
             </thead>
             <tbody>
-                {% for row in mismatches %}
-                    <tr>
-                        {% for value in row.values() %}
-                            <td>{{ value }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
+              {% for row in mismatches %}
+                <tr>
+                  {% for value in row.values() %}
+                    <td>{{ value }}</td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
             </tbody>
-        </table>
+          </table>
+        </div>
     {% endif %}
 
     {% if ontario %}
         <h3>Ontario Open Appeals</h3>
-        <table class="excel-style">
-          <thead>
-            <tr>
-              {% for col in ontario[0].keys() %}
-                <th>{{ col }}</th>
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in ontario %}
+        <div style="overflow-x:auto;">
+          <table class="excel-style">
+            <thead>
               <tr>
-                {% for val in row.values() %}
-                  <td>{{ val }}</td>
+                {% for col in ontario[0].keys() %}
+                  <th>{{ col }}</th>
                 {% endfor %}
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {% for row in ontario %}
+                <tr>
+                  {% for val in row.values() %}
+                    <td>{{ val }}</td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
     {% endif %}
 
     {% if quebec %}
         <h3>Quebec Open Appeals</h3>
-        <table class="excel-style">
+        <div style="overflow-x:auto;">
+          <table class="excel-style">
             <thead>
-                <tr>
-                    {% for col in quebec[0].keys() %}
-                        <th>{{ col }}</th>
-                    {% endfor %}
-                </tr>
+              <tr>
+                {% for col in quebec[0].keys() %}
+                  <th>{{ col }}</th>
+                {% endfor %}
+              </tr>
             </thead>
             <tbody>
-                {% for row in quebec %}
-                    <tr>
-                        {% for val in row.values() %}
-                            <td>{{ val }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
+              {% for row in quebec %}
+                <tr>
+                  {% for val in row.values() %}
+                    <td>{{ val }}</td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
             </tbody>
-        </table>
-    {% else %}
-        <p>No Quebec appeals to display.</p>
+          </table>
+        </div>
     {% endif %}
 </div>
 
