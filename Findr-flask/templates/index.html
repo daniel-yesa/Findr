@@ -93,12 +93,27 @@
         border-radius: 4px;
         padding: 6px 12px;
         cursor: pointer;
-      }    
+      }
+      table.excel-style {
+          width: 100%;
+          border-collapse: collapse;
+          font-family: monospace;
+          font-size: 14px;
+          margin-bottom: 30px;
+      }
+      table.excel-style th, table.excel-style td {
+          border: 1px solid #ccc;
+          padding: 6px 10px;
+          white-space: pre;
+      }
+      table.excel-style th {
+          background-color: #f2f2f2;
+      }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🔎 Findr - PSU Check</h1>
+    <h1>🔎 Findr - Account Discrepencies</h1>
     <form method="POST" enctype="multipart/form-data" onsubmit="document.getElementById('spinner').classList.add('show');">
         <label>📤 Upload Booked Sales CSV:</label>
         <input type="file" name="csv_file" required>
@@ -120,7 +135,7 @@
         <input type="text" name="appealer_name" required>
 
         <button type="submit">🚀 Run Report</button>
-        <div id="spinner" class="spinner">⏳ Processing, please wait...</div>
+        <div id="spinner" class="spinner">⏳ Checking, please wait...</div>
     </form>
 
     {% if mismatches %}
@@ -146,47 +161,50 @@
     {% endif %}
 
     {% if ontario %}
-        <h2>📍 Ontario Open Appeals</h2>
-        <table>
-            <thead>
-                <tr>
-                    {% for col in ontario[0].keys() %}
-                        <th>{{ col }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in ontario %}
-                    <tr>
-                        {% for value in row.values() %}
-                            <td>{{ value }}</td>
-                        {% endfor %}
-                    </tr>
+        <h3>Ontario Open Appeals</h3>
+        <table class="excel-style">
+          <thead>
+            <tr>
+              {% for col in ontario[0].keys() %}
+                <th>{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in ontario %}
+              <tr>
+                {% for val in row.values() %}
+                  <td>{{ val }}</td>
                 {% endfor %}
-            </tbody>
+              </tr>
+            {% endfor %}
+          </tbody>
         </table>
     {% endif %}
 
     {% if quebec %}
-        <h2>📍 Quebec Open Appeals</h2>
-        <table>
-            <thead>
-                <tr>
-                    {% for col in quebec[0].keys() %}
-                        <th>{{ col }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in quebec %}
-                    <tr>
-                        {% for value in row.values() %}
-                            <td>{{ value }}</td>
-                        {% endfor %}
-                    </tr>
+        <h3>Quebec Open Appeals</h3>
+        {% if quebec %}
+        <table class="excel-style">
+          <thead>
+            <tr>
+              {% for col in quebec[0].keys() %}
+                <th>{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in quebec %}
+              <tr>
+                {% for val in row.values() %}
+                  <td>{{ val }}</td>
                 {% endfor %}
-            </tbody>
+              </tr>
+            {% endfor %}
+          </tbody>
         </table>
+        {% else %}
+        <p>No Quebec appeals to display.</p>
     {% endif %}
 </div>
 
