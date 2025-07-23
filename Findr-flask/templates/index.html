@@ -24,6 +24,24 @@
     .excel-style th, .excel-style td {
       white-space: pre;
     }
+    table.excel-style {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: monospace;
+        font-size: 14px;
+        margin-bottom: 30px;
+        background-color: #fff;
+        color: #000;
+    }
+    table.excel-style th, table.excel-style td {
+        border: 1px solid #000;
+        padding: 6px 10px;
+        white-space: pre;
+    }
+    table.excel-style th {
+        background-color: #e5e5e5;
+        font-weight: bold;
+    }    
   </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen">
@@ -69,7 +87,7 @@
 
     {% if ontario %}
       <h3>Ontario Open Appeals</h3>
-      <button onclick="copyTable('ontario-table')">📋 Copy Ontario Appeals</button>
+      <button onclick="copyTableBodyOnly('ontario-table')">📋 Copy Ontario Appeals</button>
       <table id="ontario-table" class="excel-style">
         <thead>
           <tr>
@@ -92,7 +110,7 @@
     
     {% if quebec %}
       <h3>Quebec Open Appeals</h3>
-      <button onclick="copyTable('quebec-table')">📋 Copy Quebec Appeals</button>
+      <button onclick="copyTableBodyOnly('quebec-table')">📋 Copy Quebec Appeals</button>
       <table id="quebec-table" class="excel-style">
         <thead>
           <tr>
@@ -119,27 +137,20 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>AOS.init();</script>
 
-  <script>
-    new Litepicker({
-      element: document.getElementById("date-range"),
-      singleMode: false,
-      numberOfMonths: 2,
-      numberOfColumns: 2,
-      format: "M/D/YYYY",
-      autoApply: true,
+<script>
+function copyTableBodyOnly(tableId) {
+    const table = document.getElementById(tableId);
+    const rows = table.querySelectorAll("tbody tr");
+    let clipboard = "";
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const line = Array.from(cells).map(cell => cell.innerText).join("\t");
+        clipboard += line + "\n";
     });
-
-    function copyTable(tableId) {
-      const table = document.getElementById(tableId);
-      const range = document.createRange();
-      range.selectNode(table);
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
-      document.execCommand('copy');
-      selection.removeAllRanges();
-      alert("Copied!");
-    }
-  </script>
+    navigator.clipboard.writeText(clipboard).then(() => {
+        alert("Copied table rows to clipboard!");
+    });
+}
+</script>
 </body>
 </html>
