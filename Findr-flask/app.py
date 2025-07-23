@@ -5,6 +5,7 @@ import os
 import json
 import gspread
 from google.oauth2.service_account import Credentials
+import traceback
 
 from processor import process_findr_report
 
