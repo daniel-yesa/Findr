@@ -179,8 +179,9 @@
 
     {% if ontario %}
         <h3>Ontario Open Appeals</h3>
+        <button onclick="copyTable('ontario-table')">📋 Copy Ontario Appeals</button>
         <div style="overflow-x:auto;">
-          <table class="excel-style">
+          <table id="ontario-table" class="excel-style">
             <thead>
               <tr>
                 {% for col in ontario[0].keys() %}
@@ -203,8 +204,9 @@
 
     {% if quebec %}
         <h3>Quebec Open Appeals</h3>
+        <button onclick="copyTable('quebec-table')">📋 Copy Quebec Appeals</button>
         <div style="overflow-x:auto;">
-          <table class="excel-style">
+          <table id="quebec-table" class="excel-style">
             <thead>
               <tr>
                 {% for col in quebec[0].keys() %}
@@ -247,6 +249,30 @@
       });
     }
   });
+</script>
+<script>
+function copyTable(tableId) {
+    const table = document.getElementById(tableId);
+    if (!table) return;
+
+    let range = '';
+    const rows = table.querySelectorAll("tbody tr");
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const rowText = Array.from(cells).map(cell => cell.textContent).join('\t');
+        range += rowText + '\n';
+    });
+
+    // Create temp textarea to copy
+    const textarea = document.createElement("textarea");
+    textarea.value = range;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+
+    alert("✅ Table copied to clipboard!");
+}
 </script>
 </body>
 </html>
