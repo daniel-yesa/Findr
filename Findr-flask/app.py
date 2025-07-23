@@ -16,19 +16,30 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 def index():
     if request.method == "POST":
         try:
-            file = request.files["csv_file"]
-            gs_url = request.form["sheet_url"]
-            appealer_name = request.form["appealer_name"]
-
+            # ✅ Safely fetch form values
+            file = request.files.get("csv_file")
+            gs_url = request.form.get("sheet_url")
             date_range = request.form.get("date_range")
+            appealer_name = request.form.get("appealer_name")
+
+            # ✅ Validate that all are present
+            if not all([file, gs_url, date_range, appealer_name]):
+                return "<h3 style='color:red;'>Missing form inputs</h3>"
+
+            # ✅ Parse the date range
             start_date_str, end_date_str = date_range.split(" - ")
             start_date = datetime.strptime(start_date_str.strip(), "%m/%d/%Y").date()
             end_date = datetime.strptime(end_date_str.strip(), "%m/%d/%Y").date()
 
+            # ✅ Read uploaded CSV
             df_uploaded = pd.read_csv(file)
-            mismatches, internal_df = process_findr_report(df_uploaded, gs_url, start_date, end_date, appealer_name)
 
-            # Filter out "Wrong date" from open appeals
+            # ✅ Run mismatch logic
+            mismatches, internal_df = process_findr_report(
+                df_uploaded, gs_url, start_date, end_date, appealer_name
+            )
+
+            # ✅ Remove "Wrong date" mismatches
             filtered = mismatches[mismatches["Reason"] != "Wrong date"]
             merged = pd.merge(filtered, internal_df, on="Account Number", how="left")
 
