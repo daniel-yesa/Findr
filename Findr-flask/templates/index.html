@@ -138,6 +138,14 @@
         <div id="spinner" class="spinner">⏳ Checking, please wait...</div>
     </form>
 
+    {% if summary %}
+      <div style="margin-top: 30px; margin-bottom: 10px; background: #1d1d1d; border: 1px solid #444; border-radius: 8px; padding: 16px;">
+        <h3 style="color: #00ffcc; margin-bottom: 8px;">📊 Summary</h3>
+        <p><strong>Accounts Checked:</strong> {{ summary.accounts_checked }}</p>
+        <p><strong>Mismatched Accounts:</strong> {{ summary.total_mismatches }} (Ontario: {{ summary.ontario_mismatches }} | Quebec: {{ summary.quebec_mismatches }})</p>
+      </div>
+    {% endif %}
+    
     {% if mismatches %}
         <h2>🧾 Mismatched Accounts</h2>
         <table>
