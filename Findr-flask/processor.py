@@ -112,4 +112,4 @@ def process_findr_report(uploaded_file, sheet_url, start_date, end_date, appeale
             })
 
     result_df = pd.DataFrame(mismatches)
-    return result_df
+    return result_df, internal_df
