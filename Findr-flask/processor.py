@@ -1,4 +1,4 @@
-
+import os
 import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
@@ -35,6 +35,11 @@ def process_findr_report(uploaded_file, sheet_url, start_date, end_date, appeale
     internal_df['Phone'] = internal_df['Product Name'].apply(lambda x: int(match_product(x, PHONE_KEYWORDS)))
 
     summarized = internal_df.groupby('Account Number')[['Internet', 'TV', 'Phone']].max().reset_index()
+
+    creds = Credentials.from_service_account_info(
+    json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"]),
+    scopes=["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    )
     
     sheet = gspread.authorize(creds).open_by_url(sheet_url)
     worksheet = sheet.worksheet("Merged PSUReport")
