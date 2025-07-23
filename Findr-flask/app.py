@@ -27,7 +27,7 @@ def index():
             end_date = datetime.strptime(end_date_str.strip(), "%m/%d/%Y").date()
 
             df_uploaded = pd.read_csv(file)
-            mismatches, internal_df = process_findr_report(df_uploaded, gs_url, start_date, end_date)
+            mismatches, internal_df = process_findr_report(df_uploaded, gs_url, start_date, end_date, appealer_name)
 
             # Filter out "Wrong date" from open appeals
             filtered = mismatches[mismatches["Reason"] != "Wrong date"]
