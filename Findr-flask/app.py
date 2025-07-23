@@ -83,6 +83,7 @@ def index():
                 "Reason for Appeal": merged["Reason"].apply(map_reason)
             })
 
+            # ✅ Region splits
             ontario_df = appeals_df[appeals_df["Account number"].str.startswith("500")].copy()
             quebec_df = appeals_df[appeals_df["Account number"].str.startswith("960")].copy()
 
@@ -93,6 +94,7 @@ def index():
                 quebec=quebec_df.to_dict(orient="records"),
                 appealer_name=appealer_name
             )
+
         except Exception as e:
             return f"<h3 style='color: red;'>Error: {str(e)}</h3>"
 
