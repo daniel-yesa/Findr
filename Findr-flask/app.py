@@ -18,7 +18,7 @@ def index():
     if request.method == "POST":
         try:
             file = request.files.get("csv_file", None)
-            gs_url = request.form.get("sheet_url", "https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit?gid=719546440#gid=719546440").strip()
+            gs_url = request.form.get("sheet_url", "").strip()
             date_range = request.form.get("date_range", "").strip()
             appealer_name = request.form.get("appealer_name", "").strip()
 
