@@ -185,6 +185,30 @@
         </tbody>
     </table>
 </div>
+
+<div class="table-container">
+    <h2>Quebec Open Appeals</h2>
+    <button class="copy-btn" onclick="copyTable('quebecTable')">Copy Table</button>
+    <div class="copy-message" id="copyMessageQuebec">Copied!</div>
+    <table id="quebecTable">
+        <thead>
+            <tr>
+                {% for col in quebec[0].keys() %}
+                <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in quebec %}
+            <tr>
+                {% for col in row.values() %}
+                <td>{{ col }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endif %}
 
 <!-- JS dependencies -->
@@ -207,14 +231,23 @@ document.getElementById('findrForm').addEventListener('submit', function() {
 function copyTable(tableId) {
     var table = document.getElementById(tableId);
     var range = document.createRange();
-    range.selectNode(table);
+
+    // Select only rows from the second one onward (skip header row)
+    var tbody = table.querySelector("tbody");
+    range.selectNode(tbody);
+
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(range);
     document.execCommand("copy");
     window.getSelection().removeAllRanges();
 
+    // Show copied message
     if (tableId === 'ontarioTable') {
         var msg = document.getElementById("copyMessageOntario");
+        msg.style.display = "block";
+        setTimeout(() => { msg.style.display = "none"; }, 2000);
+    } else if (tableId === 'quebecTable') {
+        var msg = document.getElementById("copyMessageQuebec");
         msg.style.display = "block";
         setTimeout(() => { msg.style.display = "none"; }, 2000);
     }
