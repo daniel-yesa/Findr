@@ -1,168 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Findr - Open Appeals</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- jQuery & Date Range Picker -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-
-<style>
-    body {
-        background: linear-gradient(135deg, #0a0f1c, #1a1f3d);
-        font-family: 'Segoe UI', sans-serif;
-        color: #e0e0e0;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Animated cyberpunk title */
-    h1 {
-        text-align: center;
-        font-size: 3em;
-        background: linear-gradient(90deg, #ff00de, #00fff7, #ff00de);
-        background-size: 300% 300%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: neonShift 4s infinite linear;
-        margin-top: 30px;
-    }
-
-    @keyframes neonShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Form container */
-    .form-container {
-        max-width: 700px;
-        margin: 40px auto;
-        background: rgba(15, 15, 30, 0.95);
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 0 25px rgba(0,255,255,0.4);
-    }
-
-    label {
-        font-weight: bold;
-        display: block;
-        margin-top: 15px;
-    }
-
-    input[type="file"], input[type="text"] {
-        width: 100%;
-        padding: 10px;
-        border-radius: 6px;
-        border: none;
-        margin-top: 5px;
-        background: rgba(255,255,255,0.1);
-        color: white;
-    }
-
-    /* Neon button */
-    button {
-        margin-top: 20px;
-        width: 100%;
-        padding: 12px;
-        background: linear-gradient(90deg, #ff00de, #00fff7);
-        border: none;
-        border-radius: 8px;
-        font-size: 1.2em;
-        color: black;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 0 15px rgba(255,0,222,0.6);
-        transition: transform 0.2s;
-    }
-
-    button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 25px rgba(0,255,255,0.8);
-    }
-
-    /* Tables styling */
-    .tables-container {
-        max-width: 95%;
-        margin: 40px auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 30px;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    thead {
-        background: linear-gradient(90deg, #ff00de, #00fff7);
-        color: black;
-    }
-
-    th, td {
-        padding: 10px;
-        border: 1px solid rgba(255,255,255,0.1);
-        text-align: left;
-    }
-
-    tbody tr:nth-child(even) {
-        background: rgba(255,255,255,0.05);
-    }
-
-    /* Force copied cells to be white background */
-    table td, table th {
-        -webkit-user-select: text;
-        -moz-user-select: text;
-        -ms-user-select: text;
-        user-select: text;
-        background-clip: padding-box;
-    }
-</style>
+    <title>Findr Report</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <style>
+        body { background-color: #1e1e1e; color: white; font-family: Arial; }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; background-color: #2b2b2b; }
+        th, td { padding: 8px; border: 1px solid #444; }
+        th { background-color: #333; }
+        tr:hover { background-color: #444; }
+        /* White background when copying to Excel */
+        table td, table th {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+        }
+    </style>
 </head>
 <body>
-
-<h1>Findr - Open Appeals</h1>
-
-<div class="form-container">
-    <form action="/" method="POST" enctype="multipart/form-data">
-        <label for="csv_file">Upload CSV File</label>
-        <input type="file" name="csv_file" id="csv_file" required>
-
-        <label for="booked_date_range">Booked Date Range</label>
-        <input type="text" name="booked_date_range" id="booked_date_range" required>
-
-        <label for="gsheet_url">Google Sheets URL</label>
-        <input type="text" name="gsheet_url" id="gsheet_url" placeholder="Paste Google Sheets URL" required>
-
-        <label for="appealer_name">Name of Appealer</label>
-        <input type="text" name="appealer_name" id="appealer_name" required>
-
-        <button type="submit">Run Report</button>
+    <h2>Findr Report</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <p><input type="file" name="csv_file" required></p>
+        <p><input type="text" name="sheet_url" placeholder="Google Sheet URL" required></p>
+        <p><input type="text" name="date_range" id="date_range" placeholder="MM/DD/YYYY - MM/DD/YYYY" required></p>
+        <p><input type="text" name="appealer_name" placeholder="Appealer Name" required></p>
+        <p><button type="submit">Run Report</button></p>
     </form>
-</div>
 
-{% if tables %}
-<div class="tables-container">
-    {% for table_title, table_html in tables.items() %}
-        <h2>{{ table_title }}</h2>
-        <div>{{ table_html | safe }}</div>
-    {% endfor %}
-</div>
-{% endif %}
+    {% if show_results %}
+        <h3>Ontario Open Appeals</h3>
+        <table>
+            <tr>
+                {% for col in ontario[0].keys() %}
+                    <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+            {% for row in ontario %}
+                <tr>
+                    {% for value in row.values() %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
 
-<script>
-    // Initialize date range picker
-    $(function() {
-        $('#booked_date_range').daterangepicker({
-            opens: 'left'
+        <h3>Quebec Open Appeals</h3>
+        <table>
+            <tr>
+                {% for col in quebec[0].keys() %}
+                    <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+            {% for row in quebec %}
+                <tr>
+                    {% for value in row.values() %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script>
+        $(function() {
+            $('#date_range').daterangepicker({
+                autoUpdateInput: true,
+                locale: { format: 'MM/DD/YYYY' }
+            });
         });
-    });
-</script>
-
+    </script>
 </body>
 </html>
