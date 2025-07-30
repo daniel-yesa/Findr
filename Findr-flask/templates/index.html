@@ -1,124 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Findr</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Animated Gradient Title */
-        .animated-title {
-            background: linear-gradient(
-                270deg,
-                #00f7ff,
-                #00ff88,
-                #ff00d4,
-                #ff8800
-            );
-            background-size: 800% 800%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientShift 6s ease infinite, glowPulse 2s ease-in-out infinite;
-            font-weight: bold;
-        }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes glowPulse {
-            0%, 100% { text-shadow: 0 0 5px #00f7ff, 0 0 10px #00f7ff; }
-            50% { text-shadow: 0 0 15px #ff00d4, 0 0 25px #ff00d4; }
-        }
+<meta charset="UTF-8">
+<title>Findr - Open Appeals</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* Neon Glow Box */
-        .neon-border {
-            border: 2px solid transparent;
-            background: linear-gradient(#1f2937, #1f2937) padding-box,
-                        linear-gradient(90deg, #00f7ff, #ff00d4, #ff8800) border-box;
-            animation: borderGlow 6s ease infinite;
-        }
-        @keyframes borderGlow {
-            0% { border-image-source: linear-gradient(90deg, #00f7ff, #ff00d4); }
-            50% { border-image-source: linear-gradient(90deg, #ff00d4, #ff8800); }
-            100% { border-image-source: linear-gradient(90deg, #00f7ff, #ff00d4); }
-        }
+<!-- jQuery & Date Range Picker -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
-        /* Buttons */
-        .cyber-btn {
-            background: linear-gradient(90deg, #00f7ff, #ff00d4);
-            transition: all 0.3s ease-in-out;
-        }
-        .cyber-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px #00f7ff, 0 0 25px #ff00d4;
-        }
-    </style>
+<style>
+    body {
+        background: linear-gradient(135deg, #0a0f1c, #1a1f3d);
+        font-family: 'Segoe UI', sans-serif;
+        color: #e0e0e0;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Animated cyberpunk title */
+    h1 {
+        text-align: center;
+        font-size: 3em;
+        background: linear-gradient(90deg, #ff00de, #00fff7, #ff00de);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: neonShift 4s infinite linear;
+        margin-top: 30px;
+    }
+
+    @keyframes neonShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Form container */
+    .form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: rgba(15, 15, 30, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 0 25px rgba(0,255,255,0.4);
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 15px;
+    }
+
+    input[type="file"], input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: none;
+        margin-top: 5px;
+        background: rgba(255,255,255,0.1);
+        color: white;
+    }
+
+    /* Neon button */
+    button {
+        margin-top: 20px;
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(90deg, #ff00de, #00fff7);
+        border: none;
+        border-radius: 8px;
+        font-size: 1.2em;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 0 15px rgba(255,0,222,0.6);
+        transition: transform 0.2s;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(0,255,255,0.8);
+    }
+
+    /* Tables styling */
+    .tables-container {
+        max-width: 95%;
+        margin: 40px auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    thead {
+        background: linear-gradient(90deg, #ff00de, #00fff7);
+        color: black;
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+        background: rgba(255,255,255,0.05);
+    }
+
+    /* Force copied cells to be white background */
+    table td, table th {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+        background-clip: padding-box;
+    }
+</style>
 </head>
-<body class="bg-gray-900 text-white p-8">
+<body>
 
-    <!-- Title -->
-    <h1 class="animated-title text-5xl mb-6 text-center">Findr</h1>
+<h1>Findr - Open Appeals</h1>
 
-    <!-- Form Container -->
-    <div class="neon-border rounded-lg p-6 max-w-3xl mx-auto">
-        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+<div class="form-container">
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <label for="csv_file">Upload CSV File</label>
+        <input type="file" name="csv_file" id="csv_file" required>
 
-            <!-- CSV Upload -->
-            <div>
-                <label class="block mb-1 font-bold">Upload CSV</label>
-                <input type="file" name="csv_file" accept=".csv" class="bg-gray-800 p-2 rounded w-full">
-            </div>
+        <label for="booked_date_range">Booked Date Range</label>
+        <input type="text" name="booked_date_range" id="booked_date_range" required>
 
-            <!-- Booked Date Range -->
-            <div>
-                <label class="block mb-1 font-bold">Booked Date Range</label>
-                <input type="date" name="start_date" class="bg-gray-800 p-2 rounded">
-                <span class="mx-2">to</span>
-                <input type="date" name="end_date" class="bg-gray-800 p-2 rounded">
-            </div>
+        <label for="gsheet_url">Google Sheets URL</label>
+        <input type="text" name="gsheet_url" id="gsheet_url" placeholder="Paste Google Sheets URL" required>
 
-            <!-- Google Sheets URL -->
-            <div>
-                <label class="block mb-1 font-bold">Google Sheets URL</label>
-                <input type="url" name="google_sheets_url" placeholder="https://docs.google.com/spreadsheets/..." class="bg-gray-800 p-2 rounded w-full">
-            </div>
+        <label for="appealer_name">Name of Appealer</label>
+        <input type="text" name="appealer_name" id="appealer_name" required>
 
-            <!-- Name of Appealer -->
-            <div>
-                <label class="block mb-1 font-bold">Name of Appealer</label>
-                <input type="text" name="appealer_name" placeholder="John Doe" class="bg-gray-800 p-2 rounded w-full">
-            </div>
+        <button type="submit">Run Report</button>
+    </form>
+</div>
 
-            <!-- Run Button -->
-            <div class="text-center">
-                <button type="submit" class="cyber-btn px-6 py-2 rounded text-black font-bold">Run Report</button>
-            </div>
-        </form>
-    </div>
+{% if tables %}
+<div class="tables-container">
+    {% for table_title, table_html in tables.items() %}
+        <h2>{{ table_title }}</h2>
+        <div>{{ table_html | safe }}</div>
+    {% endfor %}
+</div>
+{% endif %}
 
-    <!-- Results -->
-    {% if results %}
-    <div class="neon-border rounded-lg p-6 mt-8 max-w-6xl mx-auto overflow-x-auto">
-        <table class="w-full border-collapse">
-            <thead>
-                <tr>
-                    {% for col in results.columns %}
-                    <th class="bg-gray-800 p-2">{{ col }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in results.itertuples(index=False) %}
-                <tr>
-                    {% for cell in row %}
-                    <td class="p-2">{{ cell }}</td>
-                    {% endfor %}
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
+<script>
+    // Initialize date range picker
+    $(function() {
+        $('#booked_date_range').daterangepicker({
+            opens: 'left'
+        });
+    });
+</script>
 
 </body>
 </html>
