@@ -19,13 +19,11 @@
             text-align: center;
             padding: 30px;
         }
-
         h1 {
             font-size: 2.5rem;
             text-shadow: 0 0 8px #00ffcc, 0 0 15px #00ffcc;
             margin-bottom: 20px;
         }
-
         .form-container {
             background: rgba(0, 0, 0, 0.85);
             border: 2px solid #00ffcc;
@@ -36,7 +34,6 @@
             margin: 0 auto 40px auto;
             border-radius: 10px;
         }
-
         input, button {
             font-family: inherit;
             font-size: 1rem;
@@ -47,13 +44,11 @@
             width: 100%;
             box-sizing: border-box;
         }
-
         input[type="text"], input[type="file"] {
             background-color: #1a1a1a;
             color: #00ffcc;
             border: 1px solid #00ffcc;
         }
-
         button {
             background-color: #00ffcc;
             color: #0d0d0d;
@@ -63,21 +58,23 @@
             transition: all 0.3s ease;
             box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
         }
-
         button:hover {
             background-color: #00e6b8;
             box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc;
             transform: scale(1.05);
         }
-
-        /* Table Styling */
+        .copy-btn {
+            margin-bottom: 10px;
+            width: auto;
+            padding: 8px 16px;
+            display: inline-block;
+        }
         .table-container {
             margin: 40px auto;
             width: 95%;
             max-width: 1000px;
             text-align: left;
         }
-
         table {
             border-collapse: collapse;
             width: 100%;
@@ -85,41 +82,19 @@
             color: #00ffcc;
             font-size: 0.9rem;
         }
-
         th, td {
             border: 1px solid #00ffcc;
             padding: 8px;
             text-align: left;
-            /* White background for copy-paste */
             background-color: #ffffff;
             color: #000000;
         }
-
         th {
             background-color: #00ffcc;
             color: #000000;
-            text-shadow: none;
         }
-
-        /* Keep visual neon glow on screen */
-        table th, table td {
-            position: relative;
-        }
-        table th::before, table td::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 255, 204, 0.05);
-            z-index: -1;
-        }
-
-        /* Alternating rows */
         tr:nth-child(even) td {
             background-color: #f9f9f9;
-        }
-
-        .hidden {
-            display: none;
         }
     </style>
 </head>
@@ -156,7 +131,8 @@
 
 <div class="table-container">
     <h2>Ontario Open Appeals</h2>
-    <table>
+    <button class="copy-btn" onclick="copyTable('ontarioTable')">Copy Table</button>
+    <table id="ontarioTable">
         <thead>
             <tr>
                 {% for col in ontario[0].keys() %}
@@ -178,7 +154,8 @@
 
 <div class="table-container">
     <h2>Quebec Open Appeals</h2>
-    <table>
+    <button class="copy-btn" onclick="copyTable('quebecTable')">Copy Table</button>
+    <table id="quebecTable">
         <thead>
             <tr>
                 {% for col in quebec[0].keys() %}
@@ -205,10 +182,28 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
     $(function() {
-        $('#date_range').daterangepicker({
-            opens: 'center'
-        });
+        $('#date_range').daterangepicker({ opens: 'center' });
     });
+
+    function copyTable(tableId) {
+        let range, sel;
+        let table = document.getElementById(tableId);
+        if (document.createRange && window.getSelection) {
+            range = document.createRange();
+            sel = window.getSelection();
+            sel.removeAllRanges();
+            try {
+                range.selectNodeContents(table);
+                sel.addRange(range);
+            } catch (e) {
+                range.selectNode(table);
+                sel.addRange(range);
+            }
+            document.execCommand("copy");
+            sel.removeAllRanges();
+            alert("Table copied to clipboard!");
+        }
+    }
 </script>
 
 </body>
