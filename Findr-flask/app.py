@@ -2,9 +2,6 @@ from flask import Flask, render_template, request
 import pandas as pd
 from datetime import datetime
 import os
-import json
-import gspread
-from google.oauth2.service_account import Credentials
 import traceback
 
 from processor import process_findr_report
@@ -17,50 +14,43 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 def index():
     if request.method == "POST":
         try:
-            file = request.files.get("csv_file", None)
+            file = request.files.get("csv_file")
             gs_url = request.form.get("sheet_url", "").strip()
             date_range = request.form.get("date_range", "").strip()
             appealer_name = request.form.get("appealer_name", "").strip()
 
-            # 🔍 Debugging: log actual input states
-            print("\n⚙️ Received form data:")
-            print(f"  - CSV file object: {file}")
-            print(f"  - CSV file name: {file.filename if file else 'None'}")
-            print(f"  - Sheet URL: '{gs_url}'")
-            print(f"  - Date Range: '{date_range}'")
-            print(f"  - Appealer Name: '{appealer_name}'")
+            # Debugging log
+            print(f"CSV file present: {bool(file)}")
+            print(f"Sheet URL: {gs_url}")
+            print(f"Date Range: {date_range}")
+            print(f"Appealer Name: {appealer_name}")
 
-            # ✅ Improved validation
-            if (
-                not file or not file.filename.strip() or
-                not gs_url or
-                not date_range or
-                not appealer_name
-            ):
+            # Safer check
+            if not file or not gs_url or not date_range or not appealer_name:
                 return "<h3 style='color:red;'>Missing form inputs — please make sure all fields are filled.</h3>"
 
-            # 📅 Parse date range
+            # Parse date range
             try:
                 start_date_str, end_date_str = date_range.split(" - ")
                 start_date = datetime.strptime(start_date_str.strip(), "%m/%d/%Y").date()
                 end_date = datetime.strptime(end_date_str.strip(), "%m/%d/%Y").date()
-            except ValueError:
-                return "<h3 style='color:red;'>Invalid date range format. Please use MM/DD/YYYY - MM/DD/YYYY</h3>"
+            except Exception:
+                return "<h3 style='color:red;'>Invalid date range format. Use MM/DD/YYYY - MM/DD/YYYY.</h3>"
 
-            # 📂 Read uploaded CSV
+            # Read uploaded CSV
             df_uploaded = pd.read_csv(file)
 
-            # 🔧 Process logic
+            # Process logic
             mismatches, internal_df = process_findr_report(
                 df_uploaded, gs_url, start_date, end_date, appealer_name
             )
 
-            # 🔢 Summary logic
+            # Summary
             checked_accounts = internal_df['Account Number'].nunique()
             valid_mismatches = mismatches[mismatches["Reason"].isin(["Missing from report", "PSU - no match"])]
             ontario_mismatch_count = valid_mismatches["Account Number"].str.startswith("500").sum()
             quebec_mismatch_count = valid_mismatches["Account Number"].str.startswith("960").sum()
-
+            
             summary = {
                 "accounts_checked": checked_accounts,
                 "total_mismatches": len(valid_mismatches),
@@ -68,9 +58,9 @@ def index():
                 "quebec_mismatches": quebec_mismatch_count
             }
 
-            # 🧹 Filter for appeals
+            # Filter appeals
             filtered = mismatches[mismatches["Reason"] != "Wrong date"]
-            merged = pd.merge(filtered, internal_df, on="Account Number", how="left")
+            merged = pd.merge(filtered, internal_df, on="Account Number", how="left").drop_duplicates(subset="Account Number")
 
             today = datetime.today().strftime("%m/%d/%Y")
 
@@ -88,8 +78,6 @@ def index():
                 elif reason == "PSU - no match":
                     return "PSUs don't match report"
                 return ""
-
-            merged = merged.drop_duplicates(subset="Account Number")
 
             appeals_df = pd.DataFrame({
                 "Type of Appeal": ["Open"] * len(merged),
@@ -114,7 +102,7 @@ def index():
                 "Reason for Appeal": merged["Reason"].apply(map_reason)
             })
 
-            # ✅ Region splits
+            # Split regions
             ontario_df = appeals_df[appeals_df["Account number"].str.startswith("500")].copy()
             quebec_df = appeals_df[appeals_df["Account number"].str.startswith("960")].copy()
 
@@ -124,15 +112,15 @@ def index():
                 ontario=ontario_df.to_dict(orient="records"),
                 quebec=quebec_df.to_dict(orient="records"),
                 appealer_name=appealer_name,
-                summary=summary
+                summary=summary,
+                show_results=True
             )
 
         except Exception as e:
-            print("❌ Exception occurred:")
             traceback.print_exc()
-            return f"<h3 style='color: red;'>Error: {str(e)}</h3>"
+            return f"<h3 style='color:red;'>Error: {str(e)}</h3>"
 
-    return render_template("index.html")
+    return render_template("index.html", show_results=False)
 
 
 if __name__ == "__main__":
