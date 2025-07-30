@@ -1,75 +1,215 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Findr Report</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <meta charset="UTF-8">
+    <title>Findr</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- Date Range Picker CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
     <style>
-        body { background-color: #1e1e1e; color: white; font-family: Arial; }
-        table { border-collapse: collapse; width: 100%; margin-top: 15px; background-color: #2b2b2b; }
-        th, td { padding: 8px; border: 1px solid #444; }
-        th { background-color: #333; }
-        tr:hover { background-color: #444; }
-        /* White background when copying to Excel */
-        table td, table th {
-            background-color: #ffffff !important;
-            color: #000000 !important;
+        body {
+            background-color: #0d0d0d;
+            color: #00ffcc;
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-shadow: 0 0 8px #00ffcc, 0 0 15px #00ffcc;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #00ffcc;
+            box-shadow: 0 0 15px #00ffcc;
+            padding: 20px;
+            width: 90%;
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+            border-radius: 10px;
+        }
+
+        input, button {
+            font-family: inherit;
+            font-size: 1rem;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="text"], input[type="file"] {
+            background-color: #1a1a1a;
+            color: #00ffcc;
+            border: 1px solid #00ffcc;
+        }
+
+        button {
+            background-color: #00ffcc;
+            color: #0d0d0d;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        button:hover {
+            background-color: #00e6b8;
+            box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc;
+            transform: scale(1.05);
+        }
+
+        /* Table Styling */
+        .table-container {
+            margin: 40px auto;
+            width: 95%;
+            max-width: 1000px;
+            text-align: left;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: transparent;
+            color: #00ffcc;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            border: 1px solid #00ffcc;
+            padding: 8px;
+            text-align: left;
+            /* White background for copy-paste */
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        th {
+            background-color: #00ffcc;
+            color: #000000;
+            text-shadow: none;
+        }
+
+        /* Keep visual neon glow on screen */
+        table th, table td {
+            position: relative;
+        }
+        table th::before, table td::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 255, 204, 0.05);
+            z-index: -1;
+        }
+
+        /* Alternating rows */
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h2>Findr Report</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <p><input type="file" name="csv_file" required></p>
-        <p><input type="text" name="sheet_url" placeholder="Google Sheet URL" required></p>
-        <p><input type="text" name="date_range" id="date_range" placeholder="MM/DD/YYYY - MM/DD/YYYY" required></p>
-        <p><input type="text" name="appealer_name" placeholder="Appealer Name" required></p>
-        <p><button type="submit">Run Report</button></p>
-    </form>
 
-    {% if show_results %}
-        <h3>Ontario Open Appeals</h3>
-        <table>
+<h1>Findr — Open Appeals Finder</h1>
+
+<div class="form-container">
+    <form method="POST" enctype="multipart/form-data">
+        <label>Upload CSV File:</label>
+        <input type="file" name="csv_file" required>
+
+        <label>Google Sheet URL:</label>
+        <input type="text" name="sheet_url" placeholder="https://docs.google.com/spreadsheets/..." required>
+
+        <label>Date Range:</label>
+        <input type="text" name="date_range" id="date_range" required>
+
+        <label>Appealer Name:</label>
+        <input type="text" name="appealer_name" placeholder="Enter your name" required>
+
+        <button type="submit">Run Report</button>
+    </form>
+</div>
+
+{% if summary %}
+<div>
+    <h2>Summary</h2>
+    <p>Accounts Checked: {{ summary.accounts_checked }}</p>
+    <p>Total Mismatches: {{ summary.total_mismatches }}</p>
+    <p>Ontario Mismatches: {{ summary.ontario_mismatches }}</p>
+    <p>Quebec Mismatches: {{ summary.quebec_mismatches }}</p>
+</div>
+
+<div class="table-container">
+    <h2>Ontario Open Appeals</h2>
+    <table>
+        <thead>
             <tr>
                 {% for col in ontario[0].keys() %}
-                    <th>{{ col }}</th>
+                <th>{{ col }}</th>
                 {% endfor %}
             </tr>
+        </thead>
+        <tbody>
             {% for row in ontario %}
-                <tr>
-                    {% for value in row.values() %}
-                        <td>{{ value }}</td>
-                    {% endfor %}
-                </tr>
+            <tr>
+                {% for col in row.values() %}
+                <td>{{ col }}</td>
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </table>
+        </tbody>
+    </table>
+</div>
 
-        <h3>Quebec Open Appeals</h3>
-        <table>
+<div class="table-container">
+    <h2>Quebec Open Appeals</h2>
+    <table>
+        <thead>
             <tr>
                 {% for col in quebec[0].keys() %}
-                    <th>{{ col }}</th>
+                <th>{{ col }}</th>
                 {% endfor %}
             </tr>
+        </thead>
+        <tbody>
             {% for row in quebec %}
-                <tr>
-                    {% for value in row.values() %}
-                        <td>{{ value }}</td>
-                    {% endfor %}
-                </tr>
+            <tr>
+                {% for col in row.values() %}
+                <td>{{ col }}</td>
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </table>
-    {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
 
-    <script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <script>
-        $(function() {
-            $('#date_range').daterangepicker({
-                autoUpdateInput: true,
-                locale: { format: 'MM/DD/YYYY' }
-            });
+<!-- Date Range Picker JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+    $(function() {
+        $('#date_range').daterangepicker({
+            opens: 'center'
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
