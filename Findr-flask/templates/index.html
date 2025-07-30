@@ -103,23 +103,51 @@
         tr:nth-child(odd) td {
             background-color: #ffffff;
         }
-        /* Date range picker styling */
+        /* Date range picker - reset layout to default but match dark theme */
         .daterangepicker {
-            min-width: 300px !important;
-            max-width: 360px !important;
+            background-color: #111; /* Dark background */
+            color: #fff;            /* White text */
+            border: 1px solid #ff0040; /* Neon red border to match theme */
         }
+        
+        /* Calendar table */
         .daterangepicker .calendar-table {
-            table-layout: fixed;
-            width: 100%;
+            background-color: transparent;
+            color: inherit;
         }
-        .daterangepicker .calendar {
-            float: left;
-            width: 50% !important;
+        
+        /* Calendar headers (month/year, day labels) */
+        .daterangepicker .calendar-table th {
+            background-color: #222; /* Slightly lighter for contrast */
+            color: #fff;
+            font-weight: bold;
         }
-        .daterangepicker.show-calendar {
-            display: flex !important;
-            flex-wrap: nowrap;
-            justify-content: center;
+        
+        /* Calendar day cells */
+        .daterangepicker td.available {
+            background-color: transparent;
+            color: #fff;
+        }
+        .daterangepicker td.available:hover {
+            background-color: #ff0040;
+            color: #fff;
+        }
+        
+        /* Active (selected) date range */
+        .daterangepicker td.active,
+        .daterangepicker td.in-range {
+            background-color: #ff0040;
+            color: #fff;
+        }
+        
+        /* Navigation arrows */
+        .daterangepicker .prev, 
+        .daterangepicker .next {
+            color: #fff;
+        }
+        .daterangepicker .prev:hover, 
+        .daterangepicker .next:hover {
+            color: #ff0040;
         }
     </style>
 </head>
