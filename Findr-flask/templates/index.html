@@ -22,48 +22,71 @@
       font-family: 'Inter', sans-serif;
     }
     .table-wrapper {
-    overflow-x: auto;
-    margin-bottom: 20px;
+      overflow-x: auto;
+      margin-bottom: 20px;
     }
-
-    button {
-        background: #00ffcc;
-        color: white; /* ✅ Make text white */
-        font-weight: bold;
-        border: none;
-        transition: all 0.3s ease;
-    }
-    
     .excel-style th, .excel-style td {
       white-space: pre;
     }
     table.excel-style {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: monospace;
-        font-size: 14px;
-        margin-bottom: 30px;
-        background-color: #fff;
-        color: #000;
+      width: 100%;
+      border-collapse: collapse;
+      font-family: monospace;
+      font-size: 14px;
+      margin-bottom: 30px;
+      background-color: #fff;
+      color: #000;
     }
     table.excel-style th, table.excel-style td {
-        border: 1px solid #000;
-        padding: 6px 10px;
-        white-space: pre;
+      border: 1px solid #000;
+      padding: 6px 10px;
+      white-space: pre;
     }
     table.excel-style th {
-        background-color: #e5e5e5;
-        font-weight: bold;
+      background-color: #e5e5e5;
+      font-weight: bold;
     }
-    
     .copy-btn {
-    background: #4f46e5;
-    color: white;
-    padding: 6px 12px;
-    margin-left: 10px;
-    font-size: 12px;
-    border-radius: 4px;
-    cursor: pointer;
+      background: #4f46e5;
+      color: white;
+      padding: 6px 12px;
+      margin-left: 10px;
+      font-size: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    .copy-btn:hover {
+      background: #4338ca;
+      transform: scale(1.05);
+    }
+    /* Run Report button animation */
+    .run-btn {
+      background: #14b8a6;
+      color: black;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 6px;
+      transition: all 0.3s ease-in-out;
+    }
+    .run-btn:hover {
+      background: #0d9488;
+      transform: scale(1.05);
+    }
+    /* Spinner animation */
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -71,7 +94,7 @@
   <div class="max-w-6xl mx-auto p-6">
     <h1 class="text-4xl font-bold text-teal-400 mb-4">🔎 Findr – YESA Discrepancy Tool</h1>
 
-    <form method="POST" enctype="multipart/form-data" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-lg" onsubmit="document.getElementById('spinner').classList.remove('hidden');">
+    <form method="POST" enctype="multipart/form-data" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-lg" onsubmit="showSpinner()">
       <div>
         <label class="block text-sm text-gray-300">📤 Upload Booked Sales CSV:</label>
         <input type="file" name="csv_file" required class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
@@ -85,7 +108,8 @@
 
       <div>
         <label class="block text-sm text-gray-300">🔗 Paste Google Sheet URL:</label>
-        <input type="url" name="sheet_url" required value="https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit?gid=1075311190#gid=1075311190" class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
+        <input type="url" name="sheet_url" required value="https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit?gid=1075311190#gid=1075311190"
+               class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
       </div>
 
       <div>
@@ -94,10 +118,12 @@
       </div>
 
       <div class="flex items-center justify-between">
-        <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-black font-semibold py-2 px-4 rounded shadow transition-all duration-300">
+        <button type="submit" id="run-btn" class="run-btn">
           🚀 Run Report
         </button>
-        <div id="spinner" class="hidden text-sm text-gray-400">⏳ Running...</div>
+        <div id="spinner" class="hidden text-sm text-gray-400">
+          <span class="spinner"></span> Running...
+        </div>
       </div>
     </form>
 
@@ -159,74 +185,35 @@
     {% endif %}
   </div>
 
-  <!-- Litepicker & AOS JS -->
-  <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+  <!-- Litepicker -->
+  <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+  <script>
+    new Litepicker({
+      element: document.getElementById('date-range'),
+      singleMode: false,
+      format: 'YYYY-MM-DD'
+    });
+
+    function showSpinner() {
+      document.getElementById('run-btn').disabled = true;
+      document.getElementById('spinner').classList.remove('hidden');
+    }
+
+    function copyTableBodyOnly(tableId) {
+      const table = document.getElementById(tableId);
+      let text = '';
+      for (let row of table.querySelectorAll('tbody tr')) {
+        let cells = [...row.querySelectorAll('td')].map(td => td.innerText);
+        text += cells.join('\t') + '\n';
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Table data copied to clipboard!');
+      });
+    }
+  </script>
+
+  <!-- AOS animation -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>AOS.init();</script>
-
-!-- Litepicker & AOS JS -->
-<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>AOS.init();</script>
-
-<!-- Toast style -->
-<style>
-  #toast {
-    visibility: hidden;
-    min-width: 200px;
-    background-color: #4f46e5;
-    color: white;
-    text-align: center;
-    border-radius: 8px;
-    padding: 12px 16px;
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 999;
-    opacity: 0;
-    transition: opacity 0.4s ease, visibility 0s linear 0.4s;
-  }
-
-  #toast.show {
-    visibility: visible;
-    opacity: 1;
-    transition-delay: 0s;
-  }
-</style>
-
-<!-- Toast HTML -->
-<div id="toast">✅ Copied to clipboard</div>
-
-<script>
-  new Litepicker({
-    element: document.getElementById("date-range"),
-    singleMode: false,
-    numberOfMonths: 2,
-    numberOfColumns: 2,
-    format: "M/D/YYYY",
-    autoApply: true,
-  });
-
-  function showToast() {
-    const toast = document.getElementById("toast");
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2000);
-  }
-
-  function copyTableBodyOnly(tableId) {
-    const table = document.getElementById(tableId);
-    const rows = table.querySelectorAll("tbody tr");
-    let clipboard = "";
-    rows.forEach(row => {
-      const cells = row.querySelectorAll("td");
-      const line = Array.from(cells).map(cell => cell.innerText).join("\t");
-      clipboard += line + "\n";
-    });
-
-    navigator.clipboard.writeText(clipboard).then(() => {
-      showToast();
-    });
-  }
-</script>
 </body>
 </html>
