@@ -17,49 +17,56 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 def index():
     if request.method == "POST":
         try:
+            # === Collect form data ===
             file = request.files.get("csv_file", None)
             gs_url = request.form.get("sheet_url", "").strip()
             date_range = request.form.get("date_range", "").strip()
             appealer_name = request.form.get("appealer_name", "").strip()
 
-            # 🔍 Debugging: log input states
+            # 🔍 Debugging: log received input
             print("⚙️ Received form data:")
             print(f"  - CSV file present: {'Yes' if file else 'No'}")
             print(f"  - Sheet URL: {gs_url}")
             print(f"  - Date Range: {date_range}")
             print(f"  - Appealer Name: {appealer_name}")
 
+            # === Validate ===
             if file is None or not all([gs_url, date_range, appealer_name]):
                 return "<h3 style='color:red;'>Missing form inputs</h3>"
 
-            start_date_str, end_date_str = date_range.split(" - ")
-            start_date = datetime.strptime(start_date_str.strip(), "%m/%d/%Y").date()
-            end_date = datetime.strptime(end_date_str.strip(), "%m/%d/%Y").date()
+            # === Parse merged date range (MM/DD/YYYY - MM/DD/YYYY) ===
+            try:
+                start_date_str, end_date_str = date_range.split(" - ")
+                start_date = datetime.strptime(start_date_str.strip(), "%m/%d/%Y").date()
+                end_date = datetime.strptime(end_date_str.strip(), "%m/%d/%Y").date()
+            except Exception:
+                return "<h3 style='color:red;'>Invalid date range format</h3>"
 
+            # === Load uploaded CSV ===
             df_uploaded = pd.read_csv(file)
 
-            # 🔧 Process logic
+            # === Process logic ===
             mismatches, internal_df = process_findr_report(
                 df_uploaded, gs_url, start_date, end_date, appealer_name
             )
 
-            # 🔢 Summary logic
+            # === Summary counts ===
             checked_accounts = internal_df['Account Number'].nunique()
             valid_mismatches = mismatches[mismatches["Reason"].isin(["Missing from report", "PSU - no match"])]
             ontario_mismatch_count = valid_mismatches["Account Number"].str.startswith("500").sum()
             quebec_mismatch_count = valid_mismatches["Account Number"].str.startswith("960").sum()
-            
+
             summary = {
                 "accounts_checked": checked_accounts,
                 "total_mismatches": len(valid_mismatches),
                 "ontario_mismatches": ontario_mismatch_count,
                 "quebec_mismatches": quebec_mismatch_count
             }
-            
-            # 🧹 Filter for appeals
+
+            # === Prepare appeals table ===
             filtered = mismatches[mismatches["Reason"] != "Wrong date"]
             merged = pd.merge(filtered, internal_df, on="Account Number", how="left")
-
+            merged = merged.drop_duplicates(subset="Account Number")
             today = datetime.today().strftime("%m/%d/%Y")
 
             def format_address(row):
@@ -76,8 +83,6 @@ def index():
                 elif reason == "PSU - no match":
                     return "PSUs don't match report"
                 return ""
-            
-            merged = merged.drop_duplicates(subset="Account Number")
 
             appeals_df = pd.DataFrame({
                 "Type of Appeal": ["Open"] * len(merged),
@@ -102,26 +107,28 @@ def index():
                 "Reason for Appeal": merged["Reason"].apply(map_reason)
             })
 
-            # ✅ Region splits
+            # === Region-specific tables ===
             ontario_df = appeals_df[appeals_df["Account number"].str.startswith("500")].copy()
             quebec_df = appeals_df[appeals_df["Account number"].str.startswith("960")].copy()
 
+            # === Pass everything to template ===
             return render_template(
                 "index.html",
                 mismatches=mismatches.to_dict(orient="records"),
                 ontario=ontario_df.to_dict(orient="records"),
                 quebec=quebec_df.to_dict(orient="records"),
                 appealer_name=appealer_name,
-                summary=summary
+                summary=summary,
+                show_results=True  # NEW: lets template know to display tables
             )
 
         except Exception as e:
-            # 🧠 Log the full traceback
             print("❌ Exception occurred:")
             traceback.print_exc()
             return f"<h3 style='color: red;'>Error: {str(e)}</h3>"
 
-    return render_template("index.html")
+    # GET request (initial landing page)
+    return render_template("index.html", show_results=False)
 
 
 if __name__ == "__main__":
