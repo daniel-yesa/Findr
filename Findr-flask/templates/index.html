@@ -5,8 +5,8 @@
     <title>Findr</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Quantico -->
+    <link href="https://fonts.googleapis.com/css2?family=Quantico&display=swap" rel="stylesheet">
 
     <!-- Date Range Picker CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -15,7 +15,7 @@
         body {
             background-color: #0d0d0d;
             color: #ff0033;
-            font-family: 'Share Tech Mono', monospace;
+            font-family: 'Quantico', sans-serif;
             text-align: center;
             padding: 30px;
         }
@@ -103,22 +103,19 @@
         tr:nth-child(odd) td {
             background-color: #ffffff;
         }
-        /* Make the date range calendar display properly */
+        /* Date range picker styling */
         .daterangepicker {
             min-width: 300px !important;
             max-width: 360px !important;
         }
-        
         .daterangepicker .calendar-table {
             table-layout: fixed;
             width: 100%;
         }
-        
         .daterangepicker .calendar {
             float: left;
             width: 50% !important;
         }
-        
         .daterangepicker.show-calendar {
             display: flex !important;
             flex-wrap: nowrap;
@@ -209,7 +206,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
-    $('#dateRange').daterangepicker({
+    $('#date_range').daterangepicker({
         opens: 'center',
         autoApply: true,
         locale: { format: 'YYYY-MM-DD' }
