@@ -52,20 +52,24 @@
     #date_range {
         font-size: inherit;
         padding: 6px;
+        background-color: #1a1a1a;
+        color: #ff0033;
+        border: 1px solid #ff0033;
     }
     button {
-        background-color: #ff0033;
+        background: linear-gradient(90deg, #ff0033, #cc002a);
         color: #0d0d0d;
         font-weight: bold;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.3s ease, transform 0.2s;
         box-shadow: 0 0 10px #ff0033, 0 0 20px #ff0033;
         position: relative;
+        overflow: hidden;
     }
     button:hover {
-        background-color: #e60029;
-        box-shadow: 0 0 20px #ff0033, 0 0 30px #ff0033;
-        transform: scale(1.05);
+        background: linear-gradient(90deg, #ff1a40, #e60029);
+        box-shadow: 0 0 20px #ff0033, 0 0 35px #ff0033;
+        transform: scale(1.07);
     }
     button:disabled {
         opacity: 0.5;
@@ -94,6 +98,15 @@
         width: auto;
         padding: 8px 16px;
         display: inline-block;
+        background: #ff0033;
+        border: none;
+        color: #fff;
+        box-shadow: 0 0 10px #ff0033;
+        transition: all 0.3s ease;
+    }
+    .copy-btn:hover {
+        background: #e60029;
+        transform: scale(1.05);
     }
     .copy-message {
         display: none;
@@ -123,6 +136,7 @@
     table th, table td {
         padding: 8px 12px;
         border: 1px solid #ddd;
+        white-space: nowrap;
     }
     table tbody tr {
         background-color: white;
@@ -228,7 +242,8 @@
 $(function() {
     $('#date_range').daterangepicker({
         opens: 'center',
-        autoApply: true
+        autoApply: true,
+        locale: { format: 'YYYY-MM-DD' }
     });
 
     document.getElementById('findrForm').addEventListener('submit', function() {
