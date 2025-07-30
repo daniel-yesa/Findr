@@ -112,6 +112,37 @@
     /* Table font change */
     table {
         font-family: Verdana, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    /* Table header styling */
+    table thead tr {
+        background-color: #ff0033; /* neon red */
+        color: white;
+        text-align: left;
+    }
+
+    table th, table td {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+    }
+
+    /* Table body styling */
+    table tbody tr {
+        background-color: white;
+        color: black;
+    }
+
+    /* Alternate row shading */
+    table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Hover effect */
+    table tbody tr:hover {
+        background-color: #f1f1f1;
     }
 </style>
 </head>
