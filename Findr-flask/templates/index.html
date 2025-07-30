@@ -49,17 +49,14 @@
         color: #ff0033;
         border: 1px solid #ff0033;
     }
-    /* Date range picker */
     #date_range {
         font-size: 0.9rem;
         padding: 8px;
     }
-    /* Run Report button animation */
     button {
         background-color: #ff0033;
         color: #0d0d0d;
         font-weight: bold;
-        border: none;
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 0 10px #ff0033, 0 0 20px #ff0033;
@@ -70,7 +67,6 @@
         box-shadow: 0 0 20px #ff0033, 0 0 30px #ff0033;
         transform: scale(1.05);
     }
-    /* Spinner inside button */
     .loading-spinner {
         display: none;
         position: absolute;
@@ -107,6 +103,23 @@
         10% { opacity: 1; transform: translateY(0); }
         90% { opacity: 1; transform: translateY(0); }
         100% { opacity: 0; transform: translateY(-3px); }
+    }
+    /* Table styling - white background, black text */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background-color: white;
+        color: black;
+    }
+    th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
     }
 </style>
 </head>
@@ -167,6 +180,30 @@
         </tbody>
     </table>
 </div>
+
+<div class="table-container">
+    <h2>Quebec Open Appeals</h2>
+    <button class="copy-btn" onclick="copyTable('quebecTable')">Copy Table</button>
+    <div class="copy-message" id="copyMessageQuebec">Copied!</div>
+    <table id="quebecTable">
+        <thead>
+            <tr>
+                {% for col in quebec[0].keys() %}
+                <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in quebec %}
+            <tr>
+                {% for col in row.values() %}
+                <td>{{ col }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endif %}
 
 <!-- JS dependencies -->
@@ -189,14 +226,22 @@ document.getElementById('findrForm').addEventListener('submit', function() {
 function copyTable(tableId) {
     var table = document.getElementById(tableId);
     var range = document.createRange();
-    range.selectNode(table);
+
+    // Copy only the body rows (skip the header)
+    range.selectNode(table.querySelector('tbody'));
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(range);
     document.execCommand("copy");
     window.getSelection().removeAllRanges();
 
+    // Show "Copied!" message
     if (tableId === 'ontarioTable') {
         var msg = document.getElementById("copyMessageOntario");
+        msg.style.display = "block";
+        setTimeout(() => { msg.style.display = "none"; }, 2000);
+    }
+    if (tableId === 'quebecTable') {
+        var msg = document.getElementById("copyMessageQuebec");
         msg.style.display = "block";
         setTimeout(() => { msg.style.display = "none"; }, 2000);
     }
