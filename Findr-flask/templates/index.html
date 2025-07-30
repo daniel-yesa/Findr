@@ -1,252 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Findr | YESA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Findr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Animated Gradient Title */
+        .animated-title {
+            background: linear-gradient(
+                270deg,
+                #00f7ff,
+                #00ff88,
+                #ff00d4,
+                #ff8800
+            );
+            background-size: 800% 800%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 6s ease infinite, glowPulse 2s ease-in-out infinite;
+            font-weight: bold;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 5px #00f7ff, 0 0 10px #00f7ff; }
+            50% { text-shadow: 0 0 15px #ff00d4, 0 0 25px #ff00d4; }
+        }
 
-  <!-- Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        /* Neon Glow Box */
+        .neon-border {
+            border: 2px solid transparent;
+            background: linear-gradient(#1f2937, #1f2937) padding-box,
+                        linear-gradient(90deg, #00f7ff, #ff00d4, #ff8800) border-box;
+            animation: borderGlow 6s ease infinite;
+        }
+        @keyframes borderGlow {
+            0% { border-image-source: linear-gradient(90deg, #00f7ff, #ff00d4); }
+            50% { border-image-source: linear-gradient(90deg, #ff00d4, #ff8800); }
+            100% { border-image-source: linear-gradient(90deg, #00f7ff, #ff00d4); }
+        }
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- Litepicker CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
-
-  <!-- AOS for animations -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    .table-wrapper {
-      overflow-x: auto;
-      margin-bottom: 20px;
-    }
-    .excel-style th, .excel-style td {
-      white-space: pre;
-    }
-    table.excel-style {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: monospace;
-      font-size: 14px;
-      margin-bottom: 30px;
-      background-color: #fff;
-      color: #000;
-    }
-    table.excel-style th, table.excel-style td {
-      border: 1px solid #000;
-      padding: 6px 10px;
-      white-space: pre;
-    }
-    table.excel-style th {
-      background-color: #e5e5e5;
-      font-weight: bold;
-    }
-    .copy-btn {
-      background: #4f46e5;
-      color: white;
-      padding: 6px 12px;
-      margin-left: 10px;
-      font-size: 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-    }
-    .copy-btn:hover {
-      background: #4338ca;
-      transform: scale(1.05);
-    }
-    /* Run Report button animation */
-    .run-btn {
-      background: #14b8a6;
-      color: black;
-      font-weight: bold;
-      padding: 10px 20px;
-      border-radius: 6px;
-      transition: all 0.3s ease-in-out;
-    }
-    .run-btn:hover {
-      background: #0d9488;
-      transform: scale(1.05);
-    }
-    /* Spinner animation */
-    .spinner {
-      border: 3px solid rgba(255, 255, 255, 0.2);
-      border-top: 3px solid white;
-      border-radius: 50%;
-      width: 16px;
-      height: 16px;
-      animation: spin 0.6s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 6px;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-  </style>
+        /* Buttons */
+        .cyber-btn {
+            background: linear-gradient(90deg, #00f7ff, #ff00d4);
+            transition: all 0.3s ease-in-out;
+        }
+        .cyber-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #00f7ff, 0 0 25px #ff00d4;
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-  <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-4xl font-bold text-teal-400 mb-4">🔎 Findr – YESA Discrepancy Tool</h1>
+<body class="bg-gray-900 text-white p-8">
 
-    <form method="POST" enctype="multipart/form-data" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-lg" onsubmit="showSpinner()">
-      <div>
-        <label class="block text-sm text-gray-300">📤 Upload Booked Sales CSV:</label>
-        <input type="file" name="csv_file" required class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
-      </div>
+    <!-- Title -->
+    <h1 class="animated-title text-5xl mb-6 text-center">Findr</h1>
 
-      <div>
-        <label class="block text-sm text-gray-300">📅 Booked Date Range:</label>
-        <input type="text" id="date-range" name="date_range" required placeholder="Select date range"
-               class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
-      </div>
+    <!-- Form Container -->
+    <div class="neon-border rounded-lg p-6 max-w-3xl mx-auto">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
 
-      <div>
-        <label class="block text-sm text-gray-300">🔗 Paste Google Sheet URL:</label>
-        <input type="url" name="sheet_url" required value="https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit?gid=1075311190#gid=1075311190"
-               class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
-      </div>
+            <!-- CSV Upload -->
+            <div>
+                <label class="block mb-1 font-bold">Upload CSV</label>
+                <input type="file" name="csv_file" accept=".csv" class="bg-gray-800 p-2 rounded w-full">
+            </div>
 
-      <div>
-        <label class="block text-sm text-gray-300">🧾 Name of Appealer:</label>
-        <input type="text" name="appealer_name" required class="mt-1 w-full bg-gray-700 text-white p-2 rounded border border-gray-600">
-      </div>
+            <!-- Booked Date Range -->
+            <div>
+                <label class="block mb-1 font-bold">Booked Date Range</label>
+                <input type="date" name="start_date" class="bg-gray-800 p-2 rounded">
+                <span class="mx-2">to</span>
+                <input type="date" name="end_date" class="bg-gray-800 p-2 rounded">
+            </div>
 
-      <div class="flex items-center justify-between">
-        <button type="submit" id="run-btn" class="run-btn">
-          🚀 Run Report
-        </button>
-        <div id="spinner" class="hidden text-sm text-gray-400">
-          <span class="spinner"></span> Running...
-        </div>
-      </div>
-    </form>
+            <!-- Google Sheets URL -->
+            <div>
+                <label class="block mb-1 font-bold">Google Sheets URL</label>
+                <input type="url" name="google_sheets_url" placeholder="https://docs.google.com/spreadsheets/..." class="bg-gray-800 p-2 rounded w-full">
+            </div>
 
-    {% if stats %}
-    <div class="mt-6 bg-gray-700 p-4 rounded-lg shadow" data-aos="fade-up">
-      <p class="text-lg font-semibold">Accounts Checked: {{ stats.total_checked }}</p>
-      <p class="text-lg">Mismatched Accounts: {{ stats.total_mismatched }} (Ontario: {{ stats.ontario }} | Quebec: {{ stats.quebec }})</p>
+            <!-- Name of Appealer -->
+            <div>
+                <label class="block mb-1 font-bold">Name of Appealer</label>
+                <input type="text" name="appealer_name" placeholder="John Doe" class="bg-gray-800 p-2 rounded w-full">
+            </div>
+
+            <!-- Run Button -->
+            <div class="text-center">
+                <button type="submit" class="cyber-btn px-6 py-2 rounded text-black font-bold">Run Report</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results -->
+    {% if results %}
+    <div class="neon-border rounded-lg p-6 mt-8 max-w-6xl mx-auto overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr>
+                    {% for col in results.columns %}
+                    <th class="bg-gray-800 p-2">{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results.itertuples(index=False) %}
+                <tr>
+                    {% for cell in row %}
+                    <td class="p-2">{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
     </div>
     {% endif %}
 
-    {% if ontario %}
-      <h3 style="display: inline-block;">Ontario Open Appeals</h3>
-      <button class="copy-btn" onclick="copyTableBodyOnly('ontario-table')">Copy</button>
-      <div class="table-wrapper">
-        <table id="ontario-table" class="excel-style">
-          <thead>
-            <tr>
-              {% for col in ontario[0].keys() %}
-                <th>{{ col }}</th>
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in ontario %}
-              <tr>
-                {% for val in row.values() %}
-                  <td>{{ val }}</td>
-                {% endfor %}
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% endif %}
-    
-    {% if quebec %}
-      <h3 style="display: inline-block;">Quebec Open Appeals</h3>
-      <button class="copy-btn" onclick="copyTableBodyOnly('quebec-table')">Copy</button>
-      <div class="table-wrapper">
-        <table id="quebec-table" class="excel-style">
-          <thead>
-            <tr>
-              {% for col in quebec[0].keys() %}
-                <th>{{ col }}</th>
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in quebec %}
-              <tr>
-                {% for val in row.values() %}
-                  <td>{{ val }}</td>
-                {% endfor %}
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% endif %}
-  </div>
-
-  <!-- Litepicker -->
-  <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
-  <script>
-    new Litepicker({
-      element: document.getElementById('date-range'),
-      singleMode: false,
-      format: 'YYYY-MM-DD'
-    });
-
-    function showSpinner() {
-      document.getElementById('run-btn').disabled = true;
-      document.getElementById('spinner').classList.remove('hidden');
-    }
-
-    function copyTableBodyOnly(tableId) {
-      const table = document.getElementById(tableId);
-      let text = '';
-      for (let row of table.querySelectorAll('tbody tr')) {
-        let cells = [...row.querySelectorAll('td')].map(td => td.innerText);
-        text += cells.join('\t') + '\n';
-      }
-      navigator.clipboard.writeText(text).then(() => {
-        alert('Table data copied to clipboard!');
-      });
-    }
-  </script>
-
-  <!-- AOS animation -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>AOS.init();</script>
-    <!-- Litepicker JS -->
-  <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
-
-  <!-- AOS Init -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    AOS.init();
-  </script>
-
-  <script>
-    function showSpinner() {
-      document.getElementById('spinner').classList.remove('hidden');
-    }
-
-    new Litepicker({
-      element: document.getElementById('date-range'),
-      singleMode: false,
-      numberOfMonths: 2,
-      numberOfColumns: 2,
-      format: 'YYYY-MM-DD',
-      dropdowns: {
-        minYear: 2023,
-        maxYear: null,
-        months: true,
-        years: true
-      },
-      setup: (picker) => {
-        picker.on('selected', () => {
-          document.getElementById('date-range').classList.add('text-white');
-        });
-      }
-    });
-  </script>
 </body>
 </html>
