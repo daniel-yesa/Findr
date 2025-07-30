@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Quantico&display=swap" rel="stylesheet">
 
 <!-- Date Range Picker CSS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 <style>
     body {
@@ -57,7 +57,6 @@
         background-color: #ff0033;
         color: #0d0d0d;
         font-weight: bold;
-        border: none;
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 0 10px #ff0033, 0 0 20px #ff0033;
@@ -68,6 +67,11 @@
         box-shadow: 0 0 20px #ff0033, 0 0 30px #ff0033;
         transform: scale(1.05);
     }
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    /* Spinner inside button */
     .loading-spinner {
         display: none;
         position: absolute;
@@ -226,30 +230,29 @@ $(function() {
         opens: 'center',
         autoApply: true
     });
+
+    document.getElementById('findrForm').addEventListener('submit', function() {
+        document.getElementById('loadingSpinner').style.display = 'inline-block';
+        document.getElementById('runReportBtn').disabled = true;
+    });
 });
 
-document.getElementById('findrForm').addEventListener('submit', function() {
-    document.getElementById('loadingSpinner').style.display = 'inline-block';
-});
-
-function copyTable(tableId, messageId) {
-    var table = document.getElementById(tableId);
-    var range = document.createRange();
-    range.selectNode(table.querySelector('tbody'));
-    var selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-    document.execCommand("copy");
-    selection.removeAllRanges();
-
-    // Show message
-    var messageEl = document.getElementById(messageId);
-    messageEl.style.display = 'block';
-    setTimeout(function() {
-        messageEl.style.display = 'none';
-    }, 2000);
+async function copyTable(tableId, messageId) {
+    let table = document.getElementById(tableId);
+    let text = "";
+    for (let row of table.rows) {
+        let cells = [...row.cells].map(cell => cell.innerText);
+        text += cells.join("\t") + "\n";
+    }
+    try {
+        await navigator.clipboard.writeText(text);
+        let msg = document.getElementById(messageId);
+        msg.style.display = "block";
+        setTimeout(() => msg.style.display = "none", 2000);
+    } catch (err) {
+        alert("Failed to copy table: " + err);
+    }
 }
 </script>
-
 </body>
 </html>
