@@ -4,8 +4,12 @@
 <meta charset="UTF-8">
 <title>Findr</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Google Fonts - Quantico -->
 <link href="https://fonts.googleapis.com/css2?family=Quantico&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<!-- Date Range Picker CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 <style>
     body {
@@ -19,13 +23,6 @@
         font-size: 2.5rem;
         text-shadow: 0 0 8px #ff0033, 0 0 15px #ff0033;
         margin-bottom: 20px;
-    }
-    label {
-        display: block;
-        margin-top: 10px;
-        margin-bottom: 5px;
-        text-shadow: 0 0 5px #ff0033;
-        font-weight: bold;
     }
     .form-container {
         background: rgba(0, 0, 0, 0.85);
@@ -52,48 +49,26 @@
         color: #ff0033;
         border: 1px solid #ff0033;
     }
+    /* Date range picker */
     #date_range {
-        padding: 6px;
-        background-color: #1a1a1a;
-        color: #ff0033;
-        border: 1px solid #ff0033;
+        font-size: 0.9rem;
+        padding: 8px;
     }
+    /* Run Report button animation */
     button {
-        background: linear-gradient(90deg, #ff0033, #cc002a);
+        background-color: #ff0033;
         color: #0d0d0d;
         font-weight: bold;
+        border: none;
         cursor: pointer;
-        transition: all 0.3s ease, transform 0.2s;
+        transition: all 0.3s ease;
         box-shadow: 0 0 10px #ff0033, 0 0 20px #ff0033;
         position: relative;
-        overflow: hidden;
     }
     button:hover {
-        background: linear-gradient(90deg, #ff1a40, #e60029);
-        box-shadow: 0 0 20px #ff0033, 0 0 35px #ff0033;
-        transform: scale(1.07);
-    }
-    button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    /* Ripple Effect */
-    button::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 5px;
-        height: 5px;
-        background: rgba(255,255,255,0.5);
-        opacity: 0;
-        border-radius: 50%;
-        transform: scale(1) translate(-50%, -50%);
-        transition: transform 0.5s, opacity 1s;
-    }
-    button:active::after {
-        opacity: 1;
-        transform: scale(20) translate(-50%, -50%);
+        background-color: #e60029;
+        box-shadow: 0 0 20px #ff0033, 0 0 30px #ff0033;
+        transform: scale(1.05);
     }
     /* Spinner inside button */
     .loading-spinner {
@@ -113,21 +88,11 @@
         0% { transform: translateY(-50%) rotate(0deg); }
         100% { transform: translateY(-50%) rotate(360deg); }
     }
-    /* Copy button */
     .copy-btn {
         margin-bottom: 10px;
         width: auto;
         padding: 8px 16px;
         display: inline-block;
-        background: #ff0033;
-        border: none;
-        color: #fff;
-        box-shadow: 0 0 10px #ff0033;
-        transition: all 0.3s ease;
-    }
-    .copy-btn:hover {
-        background: #e60029;
-        transform: scale(1.05);
     }
     .copy-message {
         display: none;
@@ -143,33 +108,23 @@
         90% { opacity: 1; transform: translateY(0); }
         100% { opacity: 0; transform: translateY(-3px); }
     }
-    /* Table Styling - Dark Mode */
-    table {
-        font-family: Verdana, sans-serif;
+    /* Appeal tables styling */
+    .table-container table {
+        background-color: #ffffff; /* White background */
+        color: #000000;           /* Black text */
         border-collapse: collapse;
         width: 100%;
-        margin-top: 15px;
     }
-    thead {
-        position: sticky;
-        top: 0;
-        background-color: #ff0033;
-        color: white;
-        z-index: 1;
+    
+    .table-container th, 
+    .table-container td {
+        border: 1px solid #000000; /* Black borders */
+        padding: 8px;
+        text-align: left;
     }
-    table th, table td {
-        padding: 8px 12px;
-        border: 1px solid #ff0033;
-    }
-    tbody tr {
-        background-color: #1a1a1a;
-        color: #ffcccc;
-    }
-    tbody tr:nth-child(even) {
-        background-color: #262626;
-    }
-    tbody tr:hover {
-        background-color: #333333;
+    
+    .table-container th {
+        background-color: #f2f2f2; /* Light gray header background */
     }
 </style>
 </head>
@@ -183,7 +138,7 @@
         <input type="file" name="csv_file" required>
 
         <label>Google Sheet URL:</label>
-        <input type="text" name="sheet_url" value="https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit?gid=719546440" required>
+        <input type="text" name="sheet_url" value="https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit?gid=719546440#gid=719546440" required>
 
         <label>Date Range:</label>
         <input type="text" name="date_range" id="date_range" required>
@@ -199,7 +154,6 @@
 </div>
 
 {% if summary %}
-<!-- Summary -->
 <div>
     <h2>Summary</h2>
     <p>Accounts Checked: {{ summary.accounts_checked }}</p>
@@ -207,10 +161,10 @@
     <p>Ontario Mismatches: {{ summary.ontario_mismatches }}</p>
     <p>Quebec Mismatches: {{ summary.quebec_mismatches }}</p>
 </div>
-<!-- Ontario Table -->
+
 <div class="table-container">
     <h2>Ontario Open Appeals</h2>
-    <button class="copy-btn" onclick="copyTable('ontarioTable', 'copyMessageOntario')">Copy Table</button>
+    <button class="copy-btn" onclick="copyTable('ontarioTable')">Copy Table</button>
     <div class="copy-message" id="copyMessageOntario">Copied!</div>
     <table id="ontarioTable">
         <thead>
@@ -231,51 +185,26 @@
         </tbody>
     </table>
 </div>
-<!-- Quebec Table -->
-<div class="table-container">
-    <h2>Quebec Open Appeals</h2>
-    <button class="copy-btn" onclick="copyTable('quebecTable', 'copyMessageQuebec')">Copy Table</button>
-    <div class="copy-message" id="copyMessageQuebec">Copied!</div>
-    <table id="quebecTable">
-        <thead>
-            <tr>
-                {% for col in quebec[0].keys() %}
-                <th>{{ col }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in quebec %}
-            <tr>
-                {% for col in row.values() %}
-                <td>{{ col }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
 {% endif %}
 
-<!-- JS -->
+<!-- JS dependencies -->
 <script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
 <script>
 $(function() {
     $('#date_range').daterangepicker({
         opens: 'center',
-        autoApply: true,
-        locale: { format: 'YYYY-MM-DD' }
-    });
-
-    document.getElementById('findrForm').addEventListener('submit', function() {
-        document.getElementById('loadingSpinner').style.display = 'inline-block';
-        document.getElementById('runReportBtn').disabled = true;
+        autoApply: true
     });
 });
 
-function copyTable(tableId, messageId) {
+document.getElementById('findrForm').addEventListener('submit', function() {
+    document.getElementById('loadingSpinner').style.display = 'inline-block';
+});
+
+function copyTable(tableId) {
     var table = document.getElementById(tableId);
     var range = document.createRange();
     range.selectNode(table);
@@ -283,8 +212,12 @@ function copyTable(tableId, messageId) {
     window.getSelection().addRange(range);
     document.execCommand("copy");
     window.getSelection().removeAllRanges();
-    document.getElementById(messageId).style.display = 'block';
-    setTimeout(() => { document.getElementById(messageId).style.display = 'none'; }, 2000);
+
+    if (tableId === 'ontarioTable') {
+        var msg = document.getElementById("copyMessageOntario");
+        msg.style.display = "block";
+        setTimeout(() => { msg.style.display = "none"; }, 2000);
+    }
 }
 </script>
 
