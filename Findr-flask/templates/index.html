@@ -1,160 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Findr</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Findr</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Google Fonts - Quantico -->
-    <link href="https://fonts.googleapis.com/css2?family=Quantico&display=swap" rel="stylesheet">
+<!-- Google Fonts - Quantico -->
+<link href="https://fonts.googleapis.com/css2?family=Quantico&display=swap" rel="stylesheet">
 
-    <!-- Date Range Picker CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<!-- Date Range Picker CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-    <style>
-        body {
-            background-color: #0d0d0d;
-            color: #ff0033;
-            font-family: 'Quantico', sans-serif;
-            text-align: center;
-            padding: 30px;
-        }
-        h1 {
-            font-size: 2.5rem;
-            text-shadow: 0 0 8px #ff0033, 0 0 15px #ff0033;
-            margin-bottom: 20px;
-        }
-        .form-container {
-            background: rgba(0, 0, 0, 0.85);
-            border: 2px solid #ff0033;
-            box-shadow: 0 0 15px #ff0033;
-            padding: 20px;
-            width: 90%;
-            max-width: 700px;
-            margin: 0 auto 40px auto;
-            border-radius: 10px;
-        }
-        input, button {
-            font-family: inherit;
-            font-size: 1rem;
-            margin: 8px 0;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        input[type="text"], input[type="file"] {
-            background-color: #1a1a1a;
-            color: #ff0033;
-            border: 1px solid #ff0033;
-        }
-        /* Smaller date range picker */
-        #date_range {
-            font-size: 0.9rem;
-            padding: 8px;
-        }
-        button {
-            background-color: #ff0033;
-            color: #0d0d0d;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px #ff0033, 0 0 20px #ff0033;
-        }
-        button:hover {
-            background-color: #e60029;
-            box-shadow: 0 0 20px #ff0033, 0 0 30px #ff0033;
-            transform: scale(1.05);
-        }
-        .copy-btn {
-            margin-bottom: 10px;
-            width: auto;
-            padding: 8px 16px;
-            display: inline-block;
-        }
-        .table-container {
-            margin: 40px auto;
-            width: fit-content;
-            max-width: 100%;
-            text-align: center;
-        }
-        table {
-            border-collapse: collapse;
-            background-color: white;
-            font-size: 0.9rem;
-            min-width: 800px;
-            box-shadow: 0 0 15px #ff0033;
-        }
-        th, td {
-            border: 1px solid #ff0033;
-            padding: 8px 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #ff0033;
-            color: #ffffff;
-            text-align: center;
-        }
-        tr:nth-child(even) td {
-            background-color: #f8f8f8;
-        }
-        tr:nth-child(odd) td {
-            background-color: #ffffff;
-        }
-        /* Keep default daterangepicker structure */
-        .daterangepicker {
-            background-color: #111 !important;
-            color: #fff !important;
-            border: 1px solid #ff0040 !important;
-        }
-        
-        /* Calendar header */
-        .daterangepicker .drp-calendar {
-            background: transparent !important;
-        }
-        
-        /* Month title + day labels */
-        .daterangepicker .calendar-table th {
-            background-color: #222 !important;
-            color: #fff !important;
-        }
-        
-        /* Available day cells */
-        .daterangepicker td.available {
-            background-color: transparent !important;
-            color: #fff !important;
-        }
-        .daterangepicker td.available:hover {
-            background-color: #ff0040 !important;
-            color: #fff !important;
-        }
-        
-        /* Selected dates */
-        .daterangepicker td.active,
-        .daterangepicker td.in-range {
-            background-color: #ff0040 !important;
-            color: #fff !important;
-        }
-        
-        /* Navigation arrows */
-        .daterangepicker .prev, 
-        .daterangepicker .next {
-            color: #fff !important;
-        }
-        .daterangepicker .prev:hover, 
-        .daterangepicker .next:hover {
-            color: #ff0040 !important;
-        }
-    </style>
+<style>
+    body {
+        background-color: #0d0d0d;
+        color: #ff0033;
+        font-family: 'Quantico', sans-serif;
+        text-align: center;
+        padding: 30px;
+    }
+    h1 {
+        font-size: 2.5rem;
+        text-shadow: 0 0 8px #ff0033, 0 0 15px #ff0033;
+        margin-bottom: 20px;
+    }
+    .form-container {
+        background: rgba(0, 0, 0, 0.85);
+        border: 2px solid #ff0033;
+        box-shadow: 0 0 15px #ff0033;
+        padding: 20px;
+        width: 90%;
+        max-width: 700px;
+        margin: 0 auto 40px auto;
+        border-radius: 10px;
+    }
+    input, button {
+        font-family: inherit;
+        font-size: 1rem;
+        margin: 8px 0;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    input[type="text"], input[type="file"] {
+        background-color: #1a1a1a;
+        color: #ff0033;
+        border: 1px solid #ff0033;
+    }
+    /* Date range picker */
+    #date_range {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+    /* Run Report button animation */
+    button {
+        background-color: #ff0033;
+        color: #0d0d0d;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px #ff0033, 0 0 20px #ff0033;
+        position: relative;
+    }
+    button:hover {
+        background-color: #e60029;
+        box-shadow: 0 0 20px #ff0033, 0 0 30px #ff0033;
+        transform: scale(1.05);
+    }
+    /* Spinner inside button */
+    .loading-spinner {
+        display: none;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 3px solid #fff;
+        border-top: 3px solid #ff0033;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: translateY(-50%) rotate(0deg); }
+        100% { transform: translateY(-50%) rotate(360deg); }
+    }
+    .copy-btn {
+        margin-bottom: 10px;
+        width: auto;
+        padding: 8px 16px;
+        display: inline-block;
+    }
+    .copy-message {
+        display: none;
+        font-size: 0.9rem;
+        color: #28a745;
+        font-weight: bold;
+        margin-top: 5px;
+        animation: fadeInOut 2.4s ease-in-out;
+    }
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-3px); }
+        10% { opacity: 1; transform: translateY(0); }
+        90% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-3px); }
+    }
+</style>
 </head>
 <body>
 
 <h1>Findr — Open Appeals Finder</h1>
 
 <div class="form-container">
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" id="findrForm">
         <label>Upload CSV File:</label>
         <input type="file" name="csv_file" required>
 
@@ -167,7 +128,10 @@
         <label>Appealer Name:</label>
         <input type="text" name="appealer_name" placeholder="Enter your name" required>
 
-        <button type="submit">Run Report</button>
+        <button type="submit" id="runReportBtn">
+            Run Report
+            <div class="loading-spinner" id="loadingSpinner"></div>
+        </button>
     </form>
 </div>
 
@@ -183,6 +147,7 @@
 <div class="table-container">
     <h2>Ontario Open Appeals</h2>
     <button class="copy-btn" onclick="copyTable('ontarioTable')">Copy Table</button>
+    <div class="copy-message" id="copyMessageOntario">Copied!</div>
     <table id="ontarioTable">
         <thead>
             <tr>
@@ -202,61 +167,40 @@
         </tbody>
     </table>
 </div>
-
-<div class="table-container">
-    <h2>Quebec Open Appeals</h2>
-    <button class="copy-btn" onclick="copyTable('quebecTable')">Copy Table</button>
-    <table id="quebecTable">
-        <thead>
-            <tr>
-                {% for col in quebec[0].keys() %}
-                <th>{{ col }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in quebec %}
-            <tr>
-                {% for col in row.values() %}
-                <td>{{ col }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
 {% endif %}
 
-<!-- Date Range Picker JS -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<script>
-    $('#daterange').daterangepicker({
-        locale: {
-            format: 'MM/DD/YYYY'
-        }
-    });
+<!-- JS dependencies -->
+<script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
-    function copyTable(tableId) {
-        let range, sel;
-        let table = document.getElementById(tableId);
-        if (document.createRange && window.getSelection) {
-            range = document.createRange();
-            sel = window.getSelection();
-            sel.removeAllRanges();
-            try {
-                range.selectNodeContents(table);
-                sel.addRange(range);
-            } catch (e) {
-                range.selectNode(table);
-                sel.addRange(range);
-            }
-            document.execCommand("copy");
-            sel.removeAllRanges();
-            alert("Table copied to clipboard!");
-        }
+<script>
+$(function() {
+    $('#date_range').daterangepicker({
+        opens: 'center',
+        autoApply: true
+    });
+});
+
+document.getElementById('findrForm').addEventListener('submit', function() {
+    document.getElementById('loadingSpinner').style.display = 'inline-block';
+});
+
+function copyTable(tableId) {
+    var table = document.getElementById(tableId);
+    var range = document.createRange();
+    range.selectNode(table);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges();
+
+    if (tableId === 'ontarioTable') {
+        var msg = document.getElementById("copyMessageOntario");
+        msg.style.display = "block";
+        setTimeout(() => { msg.style.display = "none"; }, 2000);
     }
+}
 </script>
 
 </body>
