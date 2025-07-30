@@ -103,6 +103,27 @@
         tr:nth-child(odd) td {
             background-color: #ffffff;
         }
+        /* Make the date range calendar display properly */
+        .daterangepicker {
+            min-width: 300px !important;
+            max-width: 360px !important;
+        }
+        
+        .daterangepicker .calendar-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+        
+        .daterangepicker .calendar {
+            float: left;
+            width: 50% !important;
+        }
+        
+        .daterangepicker.show-calendar {
+            display: flex !important;
+            flex-wrap: nowrap;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -188,8 +209,10 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
-    $(function() {
-        $('#date_range').daterangepicker({ opens: 'center' });
+    $('#dateRange').daterangepicker({
+        opens: 'center',
+        autoApply: true,
+        locale: { format: 'YYYY-MM-DD' }
     });
 
     function copyTable(tableId) {
