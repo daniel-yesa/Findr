@@ -215,5 +215,38 @@
   <!-- AOS animation -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>AOS.init();</script>
+    <!-- Litepicker JS -->
+  <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+
+  <!-- AOS Init -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+
+  <script>
+    function showSpinner() {
+      document.getElementById('spinner').classList.remove('hidden');
+    }
+
+    new Litepicker({
+      element: document.getElementById('date-range'),
+      singleMode: false,
+      numberOfMonths: 2,
+      numberOfColumns: 2,
+      format: 'YYYY-MM-DD',
+      dropdowns: {
+        minYear: 2023,
+        maxYear: null,
+        months: true,
+        years: true
+      },
+      setup: (picker) => {
+        picker.on('selected', () => {
+          document.getElementById('date-range').classList.add('text-white');
+        });
+      }
+    });
+  </script>
 </body>
 </html>
