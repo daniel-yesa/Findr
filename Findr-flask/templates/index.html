@@ -49,12 +49,10 @@
         color: #ff0033;
         border: 1px solid #ff0033;
     }
-    /* Date range picker - revert to normal size */
     #date_range {
         font-size: inherit;
         padding: 6px;
     }
-    /* Run Report button animation */
     button {
         background-color: #ff0033;
         color: #0d0d0d;
@@ -70,7 +68,6 @@
         box-shadow: 0 0 20px #ff0033, 0 0 30px #ff0033;
         transform: scale(1.05);
     }
-    /* Spinner inside button */
     .loading-spinner {
         display: none;
         position: absolute;
@@ -88,7 +85,6 @@
         0% { transform: translateY(-50%) rotate(0deg); }
         100% { transform: translateY(-50%) rotate(360deg); }
     }
-    /* Copy button styles */
     .copy-btn {
         margin-bottom: 10px;
         width: auto;
@@ -109,38 +105,28 @@
         90% { opacity: 1; transform: translateY(0); }
         100% { opacity: 0; transform: translateY(-3px); }
     }
-    /* Table font change */
     table {
         font-family: Verdana, sans-serif;
         border-collapse: collapse;
         width: 100%;
         margin-top: 15px;
     }
-
-    /* Table header styling */
     table thead tr {
-        background-color: #ff0033; /* neon red */
+        background-color: #ff0033;
         color: white;
         text-align: left;
     }
-
     table th, table td {
         padding: 8px 12px;
         border: 1px solid #ddd;
     }
-
-    /* Table body styling */
     table tbody tr {
         background-color: white;
         color: black;
     }
-
-    /* Alternate row shading */
     table tbody tr:nth-child(even) {
         background-color: #f9f9f9;
     }
-
-    /* Hover effect */
     table tbody tr:hover {
         background-color: #f1f1f1;
     }
@@ -182,7 +168,7 @@
 
 <div class="table-container">
     <h2>Ontario Open Appeals</h2>
-    <button class="copy-btn" onclick="copyTable('ontarioTable')">Copy Table</button>
+    <button class="copy-btn" onclick="copyTable('ontarioTable', 'copyMessageOntario')">Copy Table</button>
     <div class="copy-message" id="copyMessageOntario">Copied!</div>
     <table id="ontarioTable">
         <thead>
@@ -206,7 +192,7 @@
 
 <div class="table-container">
     <h2>Quebec Open Appeals</h2>
-    <button class="copy-btn" onclick="copyTable('quebecTable')">Copy Table</button>
+    <button class="copy-btn" onclick="copyTable('quebecTable', 'copyMessageQuebec')">Copy Table</button>
     <div class="copy-message" id="copyMessageQuebec">Copied!</div>
     <table id="quebecTable">
         <thead>
@@ -246,28 +232,22 @@ document.getElementById('findrForm').addEventListener('submit', function() {
     document.getElementById('loadingSpinner').style.display = 'inline-block';
 });
 
-function copyTable(tableId) {
+function copyTable(tableId, messageId) {
     var table = document.getElementById(tableId);
     var range = document.createRange();
-
-    // Copy only the body rows (skip the header)
     range.selectNode(table.querySelector('tbody'));
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
     document.execCommand("copy");
-    window.getSelection().removeAllRanges();
+    selection.removeAllRanges();
 
-    // Show "Copied!" message
-    if (tableId === 'ontarioTable') {
-        var msg = document.getElementById("copyMessageOntario");
-        msg.style.display = "block";
-        setTimeout(() => { msg.style.display = "none"; }, 2000);
-    }
-    if (tableId === 'quebecTable') {
-        var msg = document.getElementById("copyMessageQuebec");
-        msg.style.display = "block";
-        setTimeout(() => { msg.style.display = "none"; }, 2000);
-    }
+    // Show message
+    var messageEl = document.getElementById(messageId);
+    messageEl.style.display = 'block';
+    setTimeout(function() {
+        messageEl.style.display = 'none';
+    }, 2000);
 }
 </script>
 
