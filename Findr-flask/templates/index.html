@@ -163,51 +163,59 @@
 </div>
 
 <div class="table-container">
-    <h2>Ontario Open Appeals</h2>
+  <h2>Ontario Open Appeals</h2>
+  {% if ontario and ontario|length > 0 %}
     <button class="copy-btn" onclick="copyTable('ontarioTable')">Copy Table</button>
     <div class="copy-message" id="copyMessageOntario">Copied!</div>
     <table id="ontarioTable">
-        <thead>
-            <tr>
-                {% for col in ontario[0].keys() %}
-                <th>{{ col }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in ontario %}
-            <tr>
-                {% for col in row.values() %}
-                <td>{{ col }}</td>
-                {% endfor %}
-            </tr>
+      <thead>
+        <tr>
+          {% for col in (ontario|first).keys() %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in ontario %}
+          <tr>
+            {% for val in row.values() %}
+              <td>{{ val }}</td>
             {% endfor %}
-        </tbody>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
+  {% else %}
+    <p>No Ontario appeals found for this date range.</p>
+  {% endif %}
 </div>
 
 <div class="table-container">
-    <h2>Quebec Open Appeals</h2>
+  <h2>Quebec Open Appeals</h2>
+  {% if quebec and quebec|length > 0 %}
     <button class="copy-btn" onclick="copyTable('quebecTable')">Copy Table</button>
     <div class="copy-message" id="copyMessageQuebec">Copied!</div>
     <table id="quebecTable">
-        <thead>
-            <tr>
-                {% for col in quebec[0].keys() %}
-                <th>{{ col }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in quebec %}
-            <tr>
-                {% for col in row.values() %}
-                <td>{{ col }}</td>
-                {% endfor %}
-            </tr>
+      <thead>
+        <tr>
+          {% for col in (quebec|first).keys() %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in quebec %}
+          <tr>
+            {% for val in row.values() %}
+              <td>{{ val }}</td>
             {% endfor %}
-        </tbody>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
+  {% else %}
+    <p>No Quebec appeals found for this date range.</p>
+  {% endif %}
 </div>
 {% endif %}
 
