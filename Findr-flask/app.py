@@ -48,29 +48,45 @@ def index():
             # Summary
             checked_accounts = internal_df['Account Number'].nunique()
             valid_mismatches = mismatches[mismatches["Reason"].isin(["Missing from report", "PSU - no match"])]
-            ontario_mismatch_count = valid_mismatches["Account Number"].str.startswith("500").sum()
-            quebec_mismatch_count = valid_mismatches["Account Number"].str.startswith("960").sum()
-            
+
+            # Handle possible NaNs safely when checking prefixes
+            acct_series = valid_mismatches["Account Number"].astype(str)
+            ontario_mismatch_count = acct_series.str.startswith("500").sum()
+            quebec_mismatch_count  = acct_series.str.startswith("960").sum()
+            us_mismatch_count      = acct_series.str.startswith("833").sum()
+
             summary = {
                 "accounts_checked": checked_accounts,
-                "total_mismatches": len(valid_mismatches),
-                "ontario_mismatches": ontario_mismatch_count,
-                "quebec_mismatches": quebec_mismatch_count
+                "total_mismatches": int(len(valid_mismatches)),
+                "ontario_mismatches": int(ontario_mismatch_count),
+                "quebec_mismatches": int(quebec_mismatch_count),
+                "us_mismatches": int(us_mismatch_count),
             }
 
-            # Filter appeals
+            # Filter appeals (exclude wrong-date)
             filtered = mismatches[mismatches["Reason"] != "Wrong date"]
-            merged = pd.merge(filtered, internal_df, on="Account Number", how="left").drop_duplicates(subset="Account Number")
+
+            # Merge once, then dedupe by account
+            merged = pd.merge(
+                filtered, internal_df, on="Account Number", how="left"
+            ).drop_duplicates(subset="Account Number")
 
             today = datetime.today().strftime("%m/%d/%Y")
 
             def format_address(row):
                 addr = row.get("Customer Address", "")
                 addr2 = row.get("Customer Address Line 2", "")
-                return f"{addr}, {addr2}" if pd.notna(addr2) and addr2.strip() else addr
+                return f"{addr}, {addr2}" if pd.notna(addr2) and str(addr2).strip() else addr
 
             def install_type(val):
                 return "Self Install" if str(val).strip().lower() == "yes" else "Tech Visit"
+
+            def as_flag(x):
+                # render 1 as 1, else blank (for Excel-friendly copy)
+                try:
+                    return 1 if float(x) == 1 else ""
+                except Exception:
+                    return ""
 
             def map_reason(reason):
                 if reason == "Missing from report":
@@ -79,6 +95,7 @@ def index():
                     return "PSUs don't match report"
                 return ""
 
+            # Build appeals table
             appeals_df = pd.DataFrame({
                 "Type of Appeal": ["Open"] * len(merged),
                 "Name of Appealer": [appealer_name] * len(merged),
@@ -91,9 +108,9 @@ def index():
                 "Rep ID": merged["Rep Id"],
                 "Install Type": merged["Self Install"].apply(install_type),
                 "Installation Date": pd.to_datetime(merged["Scheduled Install Date"]).dt.strftime("%m/%d/%Y"),
-                "Internet": merged["Internet_YESA"].apply(lambda x: 1 if x == 1 else ""),
-                "TV": merged["TV_YESA"].apply(lambda x: 1 if x == 1 else ""),
-                "Phone": merged["Phone_YESA"].apply(lambda x: 1 if x == 1 else ""),
+                "Internet": merged["Internet_YESA"].apply(as_flag),
+                "TV": merged["TV_YESA"].apply(as_flag),
+                "Phone": merged["Phone_YESA"].apply(as_flag),
                 "Products": (
                     merged["Internet_YESA"].apply(lambda x: 1 if x == 1 else 0) +
                     merged["TV_YESA"].apply(lambda x: 1 if x == 1 else 0) +
@@ -102,15 +119,18 @@ def index():
                 "Reason for Appeal": merged["Reason"].apply(map_reason)
             })
 
-            # Split regions
-            ontario_df = appeals_df[appeals_df["Account number"].str.startswith("500")].copy()
-            quebec_df = appeals_df[appeals_df["Account number"].str.startswith("960")].copy()
+            # Split regions (ON: 500*, QC: 960*, US: 833*)
+            acct_series_all = appeals_df["Account number"].astype(str)
+            ontario_df = appeals_df[acct_series_all.str.startswith("500")].copy()
+            quebec_df  = appeals_df[acct_series_all.str.startswith("960")].copy()
+            us_df      = appeals_df[acct_series_all.str.startswith("833")].copy()
 
             return render_template(
                 "index.html",
                 mismatches=mismatches.to_dict(orient="records"),
                 ontario=ontario_df.to_dict(orient="records"),
                 quebec=quebec_df.to_dict(orient="records"),
+                us=us_df.to_dict(orient="records"),
                 appealer_name=appealer_name,
                 summary=summary,
                 show_results=True
