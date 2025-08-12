@@ -49,12 +49,10 @@
         color: #ff0033;
         border: 1px solid #ff0033;
     }
-    /* Date range picker */
     #date_range {
         font-size: 0.9rem;
         padding: 8px;
     }
-    /* Run Report button animation */
     button {
         background-color: #ff0033;
         color: #0d0d0d;
@@ -70,7 +68,6 @@
         box-shadow: 0 0 20px #ff0033, 0 0 30px #ff0033;
         transform: scale(1.05);
     }
-    /* Spinner inside button */
     .loading-spinner {
         display: none;
         position: absolute;
@@ -108,23 +105,20 @@
         90% { opacity: 1; transform: translateY(0); }
         100% { opacity: 0; transform: translateY(-3px); }
     }
-    /* Appeal tables styling */
     .table-container table {
-        background-color: #ffffff; /* White background */
-        color: #000000;           /* Black text */
+        background-color: #ffffff;
+        color: #000000;
         border-collapse: collapse;
         width: 100%;
     }
-    
     .table-container th, 
     .table-container td {
-        border: 1px solid #000000; /* Black borders */
+        border: 1px solid #000000;
         padding: 8px;
         text-align: left;
     }
-    
     .table-container th {
-        background-color: #f2f2f2; /* Light gray header background */
+        background-color: #f2f2f2;
     }
 </style>
 </head>
@@ -160,6 +154,7 @@
     <p>Total Mismatches: {{ summary.total_mismatches }}</p>
     <p>Ontario Mismatches: {{ summary.ontario_mismatches }}</p>
     <p>Quebec Mismatches: {{ summary.quebec_mismatches }}</p>
+    <p>US Mismatches: {{ summary.us_mismatches }}</p>
 </div>
 
 <div class="table-container">
@@ -217,6 +212,34 @@
     <p>No Quebec appeals found for this date range.</p>
   {% endif %}
 </div>
+
+<div class="table-container">
+  <h2>US Open Appeals</h2>
+  {% if us and us|length > 0 %}
+    <button class="copy-btn" onclick="copyTable('usTable')">Copy Table</button>
+    <div class="copy-message" id="copyMessageUS">Copied!</div>
+    <table id="usTable">
+      <thead>
+        <tr>
+          {% for col in (us|first).keys() %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in us %}
+          <tr>
+            {% for val in row.values() %}
+              <td>{{ val }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No US appeals found for this date range.</p>
+  {% endif %}
+</div>
 {% endif %}
 
 <!-- JS dependencies -->
@@ -240,7 +263,7 @@ function copyTable(tableId) {
     var table = document.getElementById(tableId);
     var range = document.createRange();
 
-    // Select only rows from the second one onward (skip header row)
+    // Only copy the tbody (Excel-friendly)
     var tbody = table.querySelector("tbody");
     range.selectNode(tbody);
 
@@ -249,16 +272,20 @@ function copyTable(tableId) {
     document.execCommand("copy");
     window.getSelection().removeAllRanges();
 
-    // Show copied message
+    // Show copied message per table
     if (tableId === 'ontarioTable') {
-        var msg = document.getElementById("copyMessageOntario");
-        msg.style.display = "block";
-        setTimeout(() => { msg.style.display = "none"; }, 2000);
+        showCopied('copyMessageOntario');
     } else if (tableId === 'quebecTable') {
-        var msg = document.getElementById("copyMessageQuebec");
-        msg.style.display = "block";
-        setTimeout(() => { msg.style.display = "none"; }, 2000);
+        showCopied('copyMessageQuebec');
+    } else if (tableId === 'usTable') {
+        showCopied('copyMessageUS');
     }
+}
+
+function showCopied(id) {
+    var msg = document.getElementById(id);
+    msg.style.display = "block";
+    setTimeout(() => { msg.style.display = "none"; }, 2000);
 }
 </script>
 
