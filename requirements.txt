@@ -2,3 +2,4 @@ Flask
 pandas
 gspread
 google-auth
+gunicorn
