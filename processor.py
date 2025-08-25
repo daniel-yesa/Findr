@@ -57,8 +57,6 @@ def process_findr_report(uploaded_file, sheet_url, start_date, end_date, appeale
 
     for idx, row in summarized.iterrows():
         acct = row['Account Number']
-        if acct.startswith("833"):
-            continue
 
         if acct not in psu_df.index:
             mismatches.append({
