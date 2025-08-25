@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Findr</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Google Fonts - Quantico -->
+<link href="https://fonts.googleapis.com/css2?family=Quantico&display=swap" rel="stylesheet">
+
+<!-- Date Range Picker CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<style>
+    body {
+        background-color: #0d0d0d;
+        color: #ff0033;
+        font-family: 'Quantico', sans-serif;
+        text-align: center;
+        padding: 30px;
+    }
+    h1 {
+        font-size: 2.5rem;
+        text-shadow: 0 0 8px #ff0033, 0 0 15px #ff0033;
+        margin-bottom: 20px;
+    }
+    .form-container {
+        background: rgba(0, 0, 0, 0.85);
+        border: 2px solid #ff0033;
+        box-shadow: 0 0 15px #ff0033;
+        padding: 20px;
+        width: 90%;
+        max-width: 700px;
+        margin: 0 auto 40px auto;
+        border-radius: 10px;
+    }
+    input, button {
+        font-family: inherit;
+        font-size: 1rem;
+        margin: 8px 0;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    input[type="text"], input[type="file"] {
+        background-color: #1a1a1a;
+        color: #ff0033;
+        border: 1px solid #ff0033;
+    }
+    #date_range {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+    button {
+        background-color: #ff0033;
+        color: #0d0d0d;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px #ff0033, 0 0 20px #ff0033;
+        position: relative;
+    }
+    button:hover {
+        background-color: #e60029;
+        box-shadow: 0 0 20px #ff0033, 0 0 30px #ff0033;
+        transform: scale(1.05);
+    }
+    .loading-spinner {
+        display: none;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 3px solid #fff;
+        border-top: 3px solid #ff0033;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: translateY(-50%) rotate(0deg); }
+        100% { transform: translateY(-50%) rotate(360deg); }
+    }
+    .copy-btn {
+        margin-bottom: 10px;
+        width: auto;
+        padding: 8px 16px;
+        display: inline-block;
+    }
+    .copy-message {
+        display: none;
+        font-size: 0.9rem;
+        color: #28a745;
+        font-weight: bold;
+        margin-top: 5px;
+        animation: fadeInOut 2.4s ease-in-out;
+    }
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-3px); }
+        10% { opacity: 1; transform: translateY(0); }
+        90% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-3px); }
+    }
+    .table-container table {
+        background-color: #ffffff;
+        color: #000000;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .table-container th, 
+    .table-container td {
+        border: 1px solid #000000;
+        padding: 8px;
+        text-align: left;
+    }
+    .table-container th {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+
+<h1>Findr — Open Appeals Finder</h1>
+
+<div class="form-container">
+    <form method="POST" enctype="multipart/form-data" id="findrForm">
+        <label>Upload CSV File:</label>
+        <input type="file" name="csv_file" required>
+
+        <label>Google Sheet URL:</label>
+        <input type="text" name="sheet_url" value="https://docs.google.com/spreadsheets/d/1tamMxhdJ-_wuyCrmu9mK6RiVj1lZsUJBSm0gSBbjQwM/edit?gid=719546440#gid=719546440" required>
+
+        <label>Date Range:</label>
+        <input type="text" name="date_range" id="date_range" required>
+
+        <label>Appealer Name:</label>
+        <input type="text" name="appealer_name" placeholder="Enter your name" required>
+
+        <button type="submit" id="runReportBtn">
+            Run Report
+            <div class="loading-spinner" id="loadingSpinner"></div>
+        </button>
+    </form>
+</div>
+
+{% if summary %}
+<div>
+    <h2>Summary</h2>
+    <p>Accounts Checked: {{ summary.accounts_checked }}</p>
+    <p>Total Mismatches: {{ summary.total_mismatches }}</p>
+    <p>Ontario Mismatches: {{ summary.ontario_mismatches }}</p>
+    <p>Quebec Mismatches: {{ summary.quebec_mismatches }}</p>
+    <p>US Mismatches: {{ summary.us_mismatches }}</p>
+</div>
+
+<div class="table-container">
+  <h2>Ontario Open Appeals</h2>
+  {% if ontario and ontario|length > 0 %}
+    <button class="copy-btn" onclick="copyTable('ontarioTable')">Copy Table</button>
+    <div class="copy-message" id="copyMessageOntario">Copied!</div>
+    <table id="ontarioTable">
+      <thead>
+        <tr>
+          {% for col in (ontario|first).keys() %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in ontario %}
+          <tr>
+            {% for val in row.values() %}
+              <td>{{ val }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No Ontario appeals found for this date range.</p>
+  {% endif %}
+</div>
+
+<div class="table-container">
+  <h2>Quebec Open Appeals</h2>
+  {% if quebec and quebec|length > 0 %}
+    <button class="copy-btn" onclick="copyTable('quebecTable')">Copy Table</button>
+    <div class="copy-message" id="copyMessageQuebec">Copied!</div>
+    <table id="quebecTable">
+      <thead>
+        <tr>
+          {% for col in (quebec|first).keys() %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in quebec %}
+          <tr>
+            {% for val in row.values() %}
+              <td>{{ val }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No Quebec appeals found for this date range.</p>
+  {% endif %}
+</div>
+
+<div class="table-container">
+  <h2>US Open Appeals</h2>
+  {% if us and us|length > 0 %}
+    <button class="copy-btn" onclick="copyTable('usTable')">Copy Table</button>
+    <div class="copy-message" id="copyMessageUS">Copied!</div>
+    <table id="usTable">
+      <thead>
+        <tr>
+          {% for col in (us|first).keys() %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in us %}
+          <tr>
+            {% for val in row.values() %}
+              <td>{{ val }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No US appeals found for this date range.</p>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- JS dependencies -->
+<script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+$(function() {
+    $('#date_range').daterangepicker({
+        opens: 'center',
+        autoApply: true
+    });
+});
+
+document.getElementById('findrForm').addEventListener('submit', function() {
+    document.getElementById('loadingSpinner').style.display = 'inline-block';
+});
+
+function copyTable(tableId) {
+    var table = document.getElementById(tableId);
+    var range = document.createRange();
+
+    // Only copy the tbody (Excel-friendly)
+    var tbody = table.querySelector("tbody");
+    range.selectNode(tbody);
+
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges();
+
+    // Show copied message per table
+    if (tableId === 'ontarioTable') {
+        showCopied('copyMessageOntario');
+    } else if (tableId === 'quebecTable') {
+        showCopied('copyMessageQuebec');
+    } else if (tableId === 'usTable') {
+        showCopied('copyMessageUS');
+    }
+}
+
+function showCopied(id) {
+    var msg = document.getElementById(id);
+    msg.style.display = "block";
+    setTimeout(() => { msg.style.display = "none"; }, 2000);
+}
+</script>
+
+</body>
+</html>
