@@ -9,6 +9,9 @@ from processor import process_findr_report
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
+@app.get("/health")
+def health():
+    return "ok", 200
 
 @app.route("/", methods=["GET", "POST"])
 def index():
